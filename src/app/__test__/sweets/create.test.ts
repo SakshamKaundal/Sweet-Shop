@@ -1,7 +1,6 @@
 import { POST } from "@/app/api/sweets/create/route";
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
-import { NextRequest } from "next/server";
 
 describe("Sweets - Create", () => {
   beforeEach(async () => {
@@ -17,6 +16,7 @@ describe("Sweets - Create", () => {
         price: "15.50",
         stock: 100,
         minStock: 10,
+        category: "Indian Sweets",
       }),
     });
 
@@ -26,6 +26,7 @@ describe("Sweets - Create", () => {
     expect(res.status).toBe(200);
     expect(json.name).toBe("Gulab Jamun");
     expect(json.stock).toBe(100);
+    expect(json.category).toBe("Indian Sweets");
 
     const allProducts = await db.select().from(products);
     expect(allProducts.length).toBe(1);
@@ -36,6 +37,8 @@ describe("Sweets - Create", () => {
       method: "POST",
       body: JSON.stringify({
         name: "", // missing fields
+        price: "10.00",
+        category: "Sweets",
       }),
     });
 
@@ -44,5 +47,21 @@ describe("Sweets - Create", () => {
 
     expect(res.status).toBe(400);
     expect(json.error.fieldErrors.name[0]).toBe("Name is required");
+  });
+
+  it("should fail if category is missing", async () => {
+    const req = new Request("http://localhost/api/sweets", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Rasgulla",
+        price: "12.00",
+      }),
+    });
+
+    const res = await POST(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.error.fieldErrors.category[0]).toBe("Invalid input: expected string, received undefined");
   });
 });
