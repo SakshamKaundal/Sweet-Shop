@@ -1,11 +1,13 @@
-import { NextResponse } from 'next/server';
+import { db } from "@/app/db";
+import { products } from "@/app/db/schema";
+import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-    const dummySweets = [
-        { id: 1, name: 'Ladoo', price: 10 },
-        { id: 2, name: 'Barfi', price: 15 },
-        { id: 3, name: 'Jalebi', price: 12 }
-    ];
-
-    return NextResponse.json(dummySweets);
+export async function GET(req : Request) {
+  try {
+    const sweets = await db.select().from(products);
+    return NextResponse.json({ sweets }, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+  }
 }
