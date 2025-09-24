@@ -23,7 +23,7 @@ describe("Auth - Login", () => {
       method: "POST",
       body: JSON.stringify({
         email: "alice@example.com",
-        password: "password123",
+        password: "password123" ,
       }),
     });
 
