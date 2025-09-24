@@ -1,30 +1,49 @@
-import { db } from "@/app/db";
-import { products } from "@/app/db/schema";
-import { NextResponse } from "next/server";
+import { db } from '@/app/db';
+import { products } from '@/app/db/schema';
+import { NextResponse, NextRequest } from 'next/server';
+import { z } from 'zod';
+
+// Define the validation schema using Zod
+const createProductSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  price: z.string().min(1, { message: 'Price is required' }),
+  description: z.string().optional(),
+  stock: z.number().int().nonnegative().default(0),
+  minStock: z.number().int().nonnegative().default(5),
+});
 
 export async function POST(req: Request) {
   try {
-    const { name, description, price, stock, minStock } = await req.json();
+    const body = await req.json();
 
-    // basic validation
-    if (!name || !price) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    // Validate the request body against the schema
+    const validation = createProductSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error.flatten() }, { status: 400 });
     }
 
-    const [sweet] = await db
+    // Insert the validated data into the database
+    const [newProduct] = await db
       .insert(products)
       .values({
-        name,
-        description: description || null,
-        price,
-        stock: stock ?? 0,
-        minStock: minStock ?? 5,
+        name: validation.data.name,
+        description: validation.data.description,
+        price: validation.data.price,
+        stock: validation.data.stock,
+        minStock: validation.data.minStock,
       })
-      .returning();
+      .returning(); // This returns the newly created product
 
-    return NextResponse.json({ sweet }, { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    // Return the created product with a 201 status code
+    return NextResponse.json(newProduct, { status: 200 });
+
+  } catch (error) {
+    // Handle potential JSON parsing errors or other unexpected issues
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: { message: "Invalid JSON in request body"} }, { status: 400 });
+    }
+    console.error("Error creating product:", error);
+    return NextResponse.json({ error: { message: "Something went wrong" } }, { status: 500 });
   }
 }

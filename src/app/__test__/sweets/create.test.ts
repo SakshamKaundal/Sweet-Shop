@@ -24,8 +24,8 @@ describe("Sweets - Create", () => {
     const json = await res.json();
 
     expect(res.status).toBe(200);
-    expect(json.sweet.name).toBe("Gulab Jamun");
-    expect(json.sweet.stock).toBe(100);
+    expect(json.name).toBe("Gulab Jamun");
+    expect(json.stock).toBe(100);
 
     const allProducts = await db.select().from(products);
     expect(allProducts.length).toBe(1);
@@ -43,6 +43,6 @@ describe("Sweets - Create", () => {
     const json = await res.json();
 
     expect(res.status).toBe(400);
-    expect(json.error).toBe("Invalid input");
+    expect(json.error.fieldErrors.name[0]).toBe("Name is required");
   });
 });
