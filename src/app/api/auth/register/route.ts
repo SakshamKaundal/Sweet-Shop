@@ -71,7 +71,7 @@ export async function POST(req: Request) {
         name: name.trim(),
         email: normalizedEmail,
         passwordHash: passwordHash,
-        role: "staff", // default role
+        role: "customer", // default role
       })
       .returning({
         id: users.id,

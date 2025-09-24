@@ -1,7 +1,6 @@
 import { DELETE } from "@/app/api/sweets/delete/[id]/route";
 import { db } from "@/app/db";
 import { products, users } from "@/app/db/schema";
-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -10,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 describe("Sweets - Delete", () => {
   let sweetId: number;
   let adminToken: string;
-  let staffToken: string;
+  let customerToken: string;
 
   beforeEach(async () => {
     await db.delete(products);
@@ -31,17 +30,17 @@ describe("Sweets - Delete", () => {
       { expiresIn: "1h" }
     );
 
-    // create a staff user
-    const staffPass = await bcrypt.hash("staff123", 10);
-    const [staff] = await db.insert(users).values({
-      name: "Staff User",
-      email: "staff@sweets.com",
-      passwordHash: staffPass,
-      role: "staff",
+    // create a customer user
+    const customerPass = await bcrypt.hash("customer123", 10);
+    const [customer] = await db.insert(users).values({
+      name: "Customer User",
+      email: "customer@sweets.com",
+      passwordHash: customerPass,
+      role: "customer",
     }).returning();
 
-    staffToken = jwt.sign(
-      { id: staff.id, email: staff.email, role: "staff" },
+    customerToken = jwt.sign(
+      { id: customer.id, email: customer.email, role: "customer" },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -75,10 +74,10 @@ describe("Sweets - Delete", () => {
     expect(sweets.length).toBe(0);
   });
 
-  it("should block staff from deleting a sweet", async () => {
+  it("should block customer from deleting a sweet", async () => {
     const req = new Request(`http://localhost/api/sweets/${sweetId}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${staffToken}` },
+      headers: { Authorization: `Bearer ${customerToken}` },
     });
 
     const res = await DELETE(req, { params: { id: sweetId.toString() } } as any);

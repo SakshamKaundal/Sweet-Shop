@@ -14,7 +14,7 @@ describe("Auth - Login", () => {
       name: "Alice",
       email: "alice@example.com",
       passwordHash,
-      role: "staff",
+      role: "customer",
     });
   });
 
