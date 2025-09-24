@@ -9,7 +9,7 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   email: varchar("email", { length: 100 }).unique().notNull(),
-  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  password: varchar("password_hash", { length: 255 }).notNull(),
   role: userRoleEnum("role").default("staff").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -54,7 +54,7 @@ export const orderItems = pgTable("order_items", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Relations for better querying (great for testing)
+
 export const customersRelations = relations(customers, ({ many }) => ({
   orders: many(orders),
 }));
@@ -82,7 +82,7 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   }),
 }));
 
-// Type exports for services (perfect for TypeScript TDD)
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 
@@ -98,7 +98,7 @@ export type NewOrder = typeof orders.$inferInsert;
 export type OrderItem = typeof orderItems.$inferSelect;
 export type NewOrderItem = typeof orderItems.$inferInsert;
 
-// Business logic types (great for testing complex scenarios)
+
 export type OrderWithItems = Order & {
   customer: Customer;
   orderItems: (OrderItem & {
