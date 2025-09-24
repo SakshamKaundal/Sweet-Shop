@@ -48,7 +48,7 @@ describe("Auth - Login", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error).toBe("Invalid credentials");
+    expect(json.error).toBe("Invalid email or password");
   });
 
   it("should fail if user does not exist", async () => {
@@ -64,6 +64,6 @@ describe("Auth - Login", () => {
     const json = await res.json();
 
     expect(res.status).toBe(401);
-    expect(json.error).toBe("User not found");
+    expect(json.error).toBe("Invalid email or password");
   });
 });
