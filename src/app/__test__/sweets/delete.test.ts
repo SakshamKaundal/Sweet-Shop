@@ -1,10 +1,11 @@
-import { DELETE } from "@/app/api/sweets/update/[id]/route";
+import { DELETE } from "@/app/api/sweets/delete/[id]/route";
 import { db } from "@/app/db";
 import { products, users } from "@/app/db/schema";
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "test-secret";
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
 describe("Sweets - Delete", () => {
   let sweetId: number;
