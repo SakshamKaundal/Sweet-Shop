@@ -70,7 +70,7 @@ export async function POST(req: Request) {
       .values({
         name: name.trim(),
         email: normalizedEmail,
-        password: passwordHash,
+        passwordHash: passwordHash,
         role: "staff", // default role
       })
       .returning({
