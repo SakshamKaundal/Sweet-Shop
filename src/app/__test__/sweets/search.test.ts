@@ -1,6 +1,7 @@
 import { GET } from "@/app/api/sweets/search/route";
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
+import { NextRequest } from "next/server";
 
 describe("Sweets - Search", () => {
   beforeEach(async () => {
@@ -35,32 +36,44 @@ describe("Sweets - Search", () => {
   });
 
   it("should filter sweets by name", async () => {
-    const req = new Request("http://localhost/api/sweets/search?name=Rasgulla");
-    const res = await GET(req as any);
+    const req = {
+      nextUrl: {
+        searchParams: new URLSearchParams({ name: "Rasgulla" }),
+      },
+    } as unknown as NextRequest;
+    const res = await GET(req);
     const json = await res.json();
 
     expect(res.status).toBe(200);
-    expect(json.sweets.length).toBe(1);
-    expect(json.sweets[0].name).toBe("Rasgulla");
+    expect(json.length).toBe(1);
+    expect(json[0].name).toBe("Rasgulla");
   });
 
   it("should filter sweets by category", async () => {
-    const req = new Request("http://localhost/api/sweets/search?category=Snack");
-    const res = await GET(req as any);
+    const req = {
+      nextUrl: {
+        searchParams: new URLSearchParams({ category: "Snack" }),
+      },
+    } as unknown as NextRequest;
+    const res = await GET(req);
     const json = await res.json();
 
     expect(res.status).toBe(200);
-    expect(json.sweets.length).toBe(1);
-    expect(json.sweets[0].name).toBe("Samosa");
+    expect(json.length).toBe(1);
+    expect(json[0].name).toBe("Samosa");
   });
 
   it("should filter sweets by price range", async () => {
-    const req = new Request("http://localhost/api/sweets/search?minPrice=10&maxPrice=13");
-    const res = await GET(req as any);
+    const req = {
+      nextUrl: {
+        searchParams: new URLSearchParams({ minPrice: "10", maxPrice: "13" }),
+      },
+    } as unknown as NextRequest;
+    const res = await GET(req);
     const json = await res.json();
 
     expect(res.status).toBe(200);
-    expect(json.sweets.length).toBe(1);
-    expect(json.sweets[0].name).toBe("Rasgulla");
+    expect(json.length).toBe(1);
+    expect(json[0].name).toBe("Rasgulla");
   });
 });
