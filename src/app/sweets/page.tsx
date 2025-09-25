@@ -27,7 +27,7 @@ function mapApiSweetToSweet(apiSweet: ApiSweet): Sweet {
     image: apiSweet.photoUrl || '/images/default-sweet.jpg',
     category: apiSweet.category,
     quantity: apiSweet.stock,
-    rating: 4.5, // Hardcoded for now
+    rating: 4.5,
   };
 }
 
@@ -94,66 +94,49 @@ export default function SweetsPage() {
       case 'rating':
         sortedSweets.sort((a, b) => b.rating - a.rating);
         break;
-      default:
-        break;
     }
 
     setFilteredSweets(sortedSweets);
   }, [sweets, selectedCategory, sortBy, searchQuery]);
 
-  // 🔑 Handlers
-  const handleAddToCart = (sweet: Sweet) => {
-    console.log('Added to cart:', sweet.name);
-  };
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-  };
-
-  const handleSortChange = (sort: string) => {
-    setSortBy(sort);
-  };
-
-  // 🔑 Purchase success updates state
+  // 🔑 Purchase success updates state with mapped Sweet
   const handlePurchaseSuccess = (updatedSweet: Sweet) => {
-    const updatedSweets = sweets.map((s) =>
-      s.id === updatedSweet.id ? updatedSweet : s
+    setSweets((prev) =>
+      prev.map((s) => (s.id === updatedSweet.id ? updatedSweet : s))
     );
-
-    setSweets(updatedSweets);
   };
 
-  // 🔑 Render
   return (
-    <div className="flex flex-col md:flex-row gap-8 p-8">
-      <aside className="w-full md:w-80 bg-card p-6 rounded-2xl border shadow-lg h-fit">
+    <div className="relative flex flex-col md:flex-row gap-8 p-8">
+      <aside className="w-full md:w-80 h-fit">
         <SweetFilters
           categories={categories}
           selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
+          onCategoryChange={setSelectedCategory}
           sortBy={sortBy}
-          onSortChange={handleSortChange}
+          onSortChange={setSortBy}
         />
       </aside>
 
       <main className="flex-1">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+          <h1 className="text-4xl font-extrabold tracking-tight text-white">
             Our Sweet Collection
           </h1>
           <div className="relative w-full max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
             <Input
               placeholder="Search for your favorite sweets..."
-              className="pl-10 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-ring"
+              className="pl-10 bg-gray-900/70 border border-gray-800 text-gray-200 placeholder:text-gray-500 focus-visible:ring-2 focus-visible:ring-pink-500 rounded-lg shadow-sm"
               onChange={(e) => setSearchQuery(e.target.value)}
               value={searchQuery}
             />
           </div>
         </div>
+
         <SweetsGrid
           sweets={filteredSweets}
-          onAddToCart={handleAddToCart}
+          onAddToCart={() => {}}
           onToggleFavorite={() => {}}
           onPurchaseSuccess={handlePurchaseSuccess}
         />

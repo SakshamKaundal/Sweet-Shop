@@ -30,23 +30,25 @@ export const SweetFilters = ({
   ];
 
   return (
-    <div className="space-y-8 p-6 bg-card rounded-2xl border shadow-sm">
+    <div className="space-y-6 p-5 rounded-xl bg-gray-900/70 border border-gray-800 backdrop-blur-sm shadow-md">
       <Accordion type="multiple" defaultValue={["categories"]}>
         <AccordionItem value="categories">
-          <AccordionTrigger className="font-semibold text-lg">Categories</AccordionTrigger>
+          <AccordionTrigger className="font-semibold text-base text-gray-200">
+            Categories
+          </AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-wrap gap-2 pt-4">
+            <div className="flex flex-wrap gap-2 pt-3">
               {categories.map((category) => (
                 <Button
                   key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
+                  variant={selectedCategory === category ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => onCategoryChange(category)}
-                  className={`rounded-full px-4 py-1 text-sm ${
+                  className={`rounded-full px-4 py-1 text-xs ${
                     selectedCategory === category
-                      ? "bg-gradient-primary text-primary-foreground shadow"
-                      : "hover:bg-muted"
-                  } transition`}
+                      ? "bg-pink-600 text-white shadow"
+                      : "text-gray-300 hover:bg-gray-800"
+                  }`}
                 >
                   {category}
                 </Button>
@@ -54,20 +56,23 @@ export const SweetFilters = ({
             </div>
           </AccordionContent>
         </AccordionItem>
+
         <AccordionItem value="sort-by">
-          <AccordionTrigger className="font-semibold text-lg">Sort By</AccordionTrigger>
+          <AccordionTrigger className="font-semibold text-base text-gray-200">
+            Sort By
+          </AccordionTrigger>
           <AccordionContent>
-            <div className="grid grid-cols-2 gap-2 pt-4">
+            <div className="grid grid-cols-2 gap-2 pt-3">
               {sortOptions.map((option) => (
                 <Button
                   key={option.value}
-                  variant={sortBy === option.value ? "default" : "outline"}
+                  variant={sortBy === option.value ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => onSortChange(option.value)}
-                  className={`rounded-lg px-3 text-xs transition ${
+                  className={`rounded-md px-3 text-xs ${
                     sortBy === option.value
-                      ? "bg-gradient-secondary text-secondary-foreground shadow"
-                      : "hover:bg-muted"
+                      ? "bg-pink-600 text-white shadow"
+                      : "text-gray-300 hover:bg-gray-800"
                   }`}
                 >
                   {option.label}
@@ -81,12 +86,14 @@ export const SweetFilters = ({
       {/* Active Filters */}
       {(selectedCategory !== "All" || sortBy !== "name") && (
         <div>
-          <h3 className="font-semibold text-lg mb-3">Active Filters</h3>
+          <h3 className="font-semibold text-sm text-gray-300 mb-2">
+            Active Filters
+          </h3>
           <div className="flex flex-wrap gap-2">
             {selectedCategory !== "All" && (
               <Badge
                 variant="secondary"
-                className="cursor-pointer rounded-full px-3 py-1 hover:bg-destructive hover:text-destructive-foreground transition"
+                className="cursor-pointer rounded-full px-3 py-1 text-xs bg-gray-800 text-gray-300 hover:bg-red-600 hover:text-white transition"
                 onClick={() => onCategoryChange("All")}
               >
                 Category: {selectedCategory} ×
@@ -95,7 +102,7 @@ export const SweetFilters = ({
             {sortBy !== "name" && (
               <Badge
                 variant="secondary"
-                className="cursor-pointer rounded-full px-3 py-1 hover:bg-destructive hover:text-destructive-foreground transition"
+                className="cursor-pointer rounded-full px-3 py-1 text-xs bg-gray-800 text-gray-300 hover:bg-red-600 hover:text-white transition"
                 onClick={() => onSortChange("name")}
               >
                 Sort: {sortOptions.find((opt) => opt.value === sortBy)?.label} ×
