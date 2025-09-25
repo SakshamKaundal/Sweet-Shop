@@ -23,7 +23,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const id = parseInt(params.id, 10);
+    const id = await parseInt(params.id, 10);
     const body = await req.json();
     const quantity = body.quantity || 1;
 
