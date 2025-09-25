@@ -17,6 +17,20 @@ interface ApiSweet {
   stock: number;
 }
 
+// ✅ Helper: Map ApiSweet → Sweet
+function mapApiSweetToSweet(apiSweet: ApiSweet): Sweet {
+  return {
+    id: apiSweet.id.toString(),
+    name: apiSweet.name,
+    description: apiSweet.description,
+    price: parseFloat(apiSweet.price),
+    image: apiSweet.photoUrl || '/images/default-sweet.jpg',
+    category: apiSweet.category,
+    quantity: apiSweet.stock,
+    rating: 4.5, // Hardcoded for now
+  };
+}
+
 export default function SweetsPage() {
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [filteredSweets, setFilteredSweets] = useState<Sweet[]>([]);
@@ -25,23 +39,23 @@ export default function SweetsPage() {
   const [sortBy, setSortBy] = useState<string>('name');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // 🔑 Fetch sweets on mount
   useEffect(() => {
     const fetchSweets = async () => {
       try {
         const response = await fetch('/api/sweets/getAll');
         const data = await response.json();
-        const mappedSweets = data.sweets.map((sweet: ApiSweet) => ({
-          id: sweet.id.toString(),
-          name: sweet.name,
-          description: sweet.description,
-          price: parseFloat(sweet.price),
-          image: sweet.photoUrl || '/images/default-sweet.jpg',
-          category: sweet.category,
-          quantity: sweet.stock,
-          rating: 4.5, // Hardcoded rating
-        }));
+
+        const mappedSweets: Sweet[] = data.sweets.map((sweet: ApiSweet) =>
+          mapApiSweetToSweet(sweet)
+        );
+
         setSweets(mappedSweets);
-        const uniqueCategories = ['All', ...Array.from(new Set(mappedSweets.map((s: Sweet) => s.category))) as string[]];
+
+        const uniqueCategories = [
+          'All',
+          ...Array.from(new Set(mappedSweets.map((s) => s.category))) as string[],
+        ];
         setCategories(uniqueCategories);
       } catch (error) {
         console.error('Failed to fetch sweets:', error);
@@ -51,14 +65,18 @@ export default function SweetsPage() {
     fetchSweets();
   }, []);
 
+  // 🔑 Filtering, searching, sorting
   useEffect(() => {
     let sortedSweets = [...sweets];
+
     if (selectedCategory !== 'All') {
-      sortedSweets = sortedSweets.filter(sweet => sweet.category === selectedCategory);
+      sortedSweets = sortedSweets.filter(
+        (sweet) => sweet.category === selectedCategory
+      );
     }
 
     if (searchQuery) {
-      sortedSweets = sortedSweets.filter(sweet =>
+      sortedSweets = sortedSweets.filter((sweet) =>
         sweet.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -83,6 +101,7 @@ export default function SweetsPage() {
     setFilteredSweets(sortedSweets);
   }, [sweets, selectedCategory, sortBy, searchQuery]);
 
+  // 🔑 Handlers
   const handleAddToCart = (sweet: Sweet) => {
     console.log('Added to cart:', sweet.name);
   };
@@ -95,28 +114,20 @@ export default function SweetsPage() {
     setSortBy(sort);
   };
 
-  const handlePurchaseSuccess = (updatedSweet: ApiSweet) => {
-    const updatedSweets = sweets.map((s) => {
-      if (s.id === updatedSweet.id.toString()) {
-        return {
-          ...s,
-          quantity: updatedSweet.stock,
-          name: updatedSweet.name,
-          description: updatedSweet.description,
-          price: parseFloat(updatedSweet.price),
-          image: updatedSweet.photoUrl || '/images/default-sweet.jpg',
-          category: updatedSweet.category,
-        };
-      }
-      return s;
-    });
+  // 🔑 Purchase success updates state
+  const handlePurchaseSuccess = (updatedSweet: Sweet) => {
+    const updatedSweets = sweets.map((s) =>
+      s.id === updatedSweet.id ? updatedSweet : s
+    );
+
     setSweets(updatedSweets);
   };
 
+  // 🔑 Render
   return (
     <div className="flex flex-col md:flex-row gap-8 p-8">
       <aside className="w-full md:w-80 bg-card p-6 rounded-2xl border shadow-lg h-fit">
-        <SweetFilters 
+        <SweetFilters
           categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
@@ -127,7 +138,9 @@ export default function SweetsPage() {
 
       <main className="flex-1">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight">Our Sweet Collection</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            Our Sweet Collection
+          </h1>
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input

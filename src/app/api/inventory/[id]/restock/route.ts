@@ -1,6 +1,6 @@
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 
@@ -12,9 +12,16 @@ interface DecodedToken {
   exp: number;
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> } // 👈 Promise
+) {
   try {
-    // 🔑 Check auth
+    // 🔑 Resolve params
+    const { id } = await params;
+    const parsedId = parseInt(id, 10);
+
+    // 🔑 Auth check
     const authHeader = req.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
     const decoded = jwt.decode(token!) as DecodedToken;
@@ -23,13 +30,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // 🔑 Extract sweet ID and body
-    const id = parseInt(params.id, 10);
+    // 🔑 Extract body
     const { quantity } = await req.json();
     const addQty = quantity && quantity > 0 ? quantity : 1;
 
     // 🔑 Find sweet
-    const sweet = await db.select().from(products).where(eq(products.id, id));
+    const sweet = await db.select().from(products).where(eq(products.id, parsedId));
     if (sweet.length === 0) {
       return NextResponse.json({ error: "Sweet not found" }, { status: 404 });
     }
@@ -42,7 +48,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         stock: currentStock + addQty,
         updatedAt: new Date(),
       })
-      .where(eq(products.id, id))
+      .where(eq(products.id, parsedId))
       .returning();
 
     return NextResponse.json(

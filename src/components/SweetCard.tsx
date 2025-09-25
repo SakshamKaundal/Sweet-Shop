@@ -19,6 +19,7 @@ export interface Sweet {
 
 interface SweetCardProps {
   sweet: Sweet;
+  onAddToCart: (sweet: Sweet) => void;
   onToggleFavorite?: (sweetId: string) => void;
   onPurchaseSuccess?: (updatedSweet: Sweet) => void;
 }

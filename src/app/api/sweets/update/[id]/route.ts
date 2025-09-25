@@ -3,13 +3,17 @@ import { products } from "@/app/db/schema";
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 
-export async function PUT(req: Request, context: { params: { id: string } }) {
+export async function PUT(
+  req: Request,
+  context: { params: Promise<{ id: string }> } // 👈 make params async
+) {
   try {
-    const id = parseInt(context.params.id, 10);
+    const { id } = await context.params; // 👈 await it
+    const parsedId = parseInt(id, 10);
     const body = await req.json();
 
     // check if sweet exists
-    const sweet = await db.select().from(products).where(eq(products.id, id));
+    const sweet = await db.select().from(products).where(eq(products.id, parsedId));
     if (sweet.length === 0) {
       return NextResponse.json({ error: "Sweet not found" }, { status: 404 });
     }
@@ -25,12 +29,15 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
         ...(body.photoUrl && { photoUrl: body.photoUrl }),
         updatedAt: new Date(),
       })
-      .where(eq(products.id, id))
+      .where(eq(products.id, parsedId))
       .returning();
 
     return NextResponse.json({ sweet: updated }, { status: 200 });
   } catch (err) {
     console.error("Error updating sweet:", err);
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }

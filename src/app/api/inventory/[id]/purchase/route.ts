@@ -12,7 +12,10 @@ interface DecodedToken {
   exp: number;
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  req: Request,
+  context: { params: Promise<{ id: string }> } // 👈 params is async
+) {
   try {
     // ✅ Auth check
     const authHeader = req.headers.get("authorization");
@@ -23,12 +26,15 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const id = parseInt(params.id, 10);
+    // 👇 await params
+    const { id } = await context.params;
+    const parsedId = parseInt(id, 10);
+
     const body = await req.json();
     const quantity = body.quantity || 1;
 
     // ✅ Check sweet
-    const sweet = await db.select().from(products).where(eq(products.id, id));
+    const sweet = await db.select().from(products).where(eq(products.id, parsedId));
     if (sweet.length === 0) {
       return NextResponse.json({ error: "Sweet not found" }, { status: 404 });
     }
@@ -44,10 +50,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         stock: currentStock - quantity,
         updatedAt: new Date(),
       })
-      .where(eq(products.id, id))
+      .where(eq(products.id, parsedId))
       .returning();
 
-    return NextResponse.json({ message: "Purchase successful", sweet: updated }, { status: 200 });
+    return NextResponse.json(
+      { message: "Purchase successful", sweet: updated },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Error purchasing sweet:", err);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
