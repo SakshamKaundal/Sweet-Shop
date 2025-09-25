@@ -1,36 +1,235 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sweet Shop Management System
+
+A full-stack application for managing a sweet shop, including inventory, sweet management, and user authentication.
+
+---
+## Table of Contents
+1. [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Running the Application](#running-the-application)
+2. [Available Scripts](#available-scripts)
+3. [Project Structure](#project-structure)
+4. [API Documentation](#api-documentation)
+    - [Authentication APIs](#authentication-apis)
+    - [Sweets APIs](#sweets-apis)
+    - [Inventory APIs](#inventory-apis)
+5. [Testing](#testing)
+6. [User Interface Flow](#user-interface-flow)
+7. [Live Website](#live-website)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+Follow these instructions to set up the project locally.
+
+### Prerequisites
+
+Make sure you have the following installed on your machine:
+- [Node.js](httpss://nodejs.org/en/) (v18.x or later recommended)
+- [npm](httpss://www.npmjs.com/) or [yarn](httpss://yarnpkg.com/)
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repository-url>
+    cd sweet-shop-management
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Set up environment variables:**
+    Create a `.env.local` file in the root of the project and add the necessary environment variables. You can use the `.env.example` file as a reference if one is available.
+    ```bash
+    # .env.local
+    DATABASE_URL="your_database_connection_string"
+    # Add other environment variables here
+    ```
+
+### Running the Application
+
+Once the installation is complete, you can run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Available Scripts
 
-## Learn More
+In the project directory, you can run the following commands:
 
-To learn more about Next.js, take a look at the following resources:
+-   `npm run dev`: Runs the app in development mode.
+-   `npm run build`: Builds the app for production.
+-   `npm run start`: Starts a production server.
+-   `npm run lint`: Lints the project files.
+-   `npm run test`: Runs the test suite.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+The project is a Next.js application with the following structure:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-   `src/app/`: Contains the main application pages and API routes.
+-   `src/components/`: Contains reusable React components.
+-   `src/lib/`: Contains utility functions and libraries.
+-   `src/db/`: Contains database schema and migration scripts.
+-   `public/`: Contains static assets.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## API Documentation
+
+### Authentication APIs
+
+#### 1. User Registration
+- **Endpoint:** `POST /api/auth/register`
+- **Description:** Registers a new user.
+- **Request Body:**
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response:** Returns a success message on completion.
+
+#### 2. User Login
+- **Endpoint:** `POST /api/auth/login`
+- **Description:** Authenticates a user and returns a session token.
+- **Request Body:**
+  ```json
+  {
+    "email": "john.doe@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response:** Returns a success message and sets an authentication cookie.
+
+### Sweets APIs
+
+#### 1. Create Sweet
+- **Endpoint:** `POST /api/sweets/create`
+- **Description:** Adds a new sweet to the database.
+- **Request Body:**
+  ```json
+  {
+    "name": "Chocolate Truffle",
+    "price": 2.50,
+    "image": "chocolate-truffles.jpg"
+  }
+  ```
+- **Response:** Returns the newly created sweet object.
+
+#### 2. Get All Sweets
+- **Endpoint:** `GET /api/sweets/getAll`
+- **Description:** Retrieves a list of all available sweets.
+- **Response:** An array of sweet objects.
+
+#### 3. Update Sweet
+- **Endpoint:** `PUT /api/sweets/update/[id]`
+- **Description:** Updates the details of a specific sweet.
+- **Request Body:**
+  ```json
+  {
+    "name": "Deluxe Chocolate Truffle",
+    "price": 3.00
+  }
+  ```
+- **Response:** Returns the updated sweet object.
+
+#### 4. Delete Sweet
+- **Endpoint:** `DELETE /api/sweets/delete/[id]`
+- **Description:** Removes a sweet from the database.
+- **Response:** Returns a success message.
+
+#### 5. Search Sweets
+- **Endpoint:** `GET /api/sweets/search?query=<search_term>`
+- **Description:** Searches for sweets by name.
+- **Response:** An array of matching sweet objects.
+
+### Inventory APIs
+
+#### 1. Purchase Sweet
+- **Endpoint:** `POST /api/inventory/[id]/purchase`
+- **Description:** Records a purchase of a sweet, decreasing its stock.
+- **Request Body:**
+  ```json
+  {
+    "quantity": 10
+  }
+  ```
+- **Response:** Returns a success message.
+
+#### 2. Restock Sweet
+- **Endpoint:** `POST /api/inventory/[id]/restock`
+- **Description:** Records a restocking of a sweet, increasing its stock.
+- **Request Body:**
+  ```json
+  {
+    "quantity": 50
+  }
+  ```
+- **Response:** Returns a success message.
+
+---
+
+## Testing
+
+The application includes a comprehensive test suite to ensure code quality and correctness.
+
+-   **Authentication:**
+    -   `login.test.ts`: Tests the user login functionality.
+    -   `register.test.ts`: Tests the user registration process.
+-   **Sweets Management:**
+    -   `create.test.ts`: Tests the creation of new sweets.
+    -   `getAll.test.ts`: Tests fetching all sweets.
+    -   `update.test.ts`: Tests updating sweet details.
+    -   `delete.test.ts`: Tests deleting sweets.
+    -   `search.test.ts`: Tests the search functionality.
+-   **Inventory Management:**
+    -   `purchase.test.ts`: Tests the purchase functionality.
+    -   `restock.test.ts`: Tests the restock functionality.
+
+---
+
+## User Interface Flow
+
+1.  **Homepage:**
+    -   Displays a hero section with a call-to-action.
+    -   Shows a grid of featured sweets.
+    -   Users can navigate to the login, register, or sweets pages.
+
+2.  **Authentication:**
+    -   **Register Page (`/register`):** New users can create an account by providing their name, email, and password.
+    -   **Login Page (`/login`):** Existing users can log in with their email and password.
+
+3.  **Sweets Page (`/sweets`):**
+    -   Displays all available sweets in a grid.
+    -   Includes a filter and search bar to easily find specific sweets.
+    -   Each sweet is displayed on a `SweetCard` with its name, price, and image.
+
+4.  **Admin Dashboard (`/admin`):**
+    -   Accessible only to authenticated admin users.
+    -   Displays all sweets in an `AdminSweetsGrid`.
+    -   Admins can:
+        -   **Add new sweets** using the `AddSweetForm`.
+        -   **Edit existing sweets** using the `EditSweetForm`.
+        -   **Delete sweets**.
+        -   **Manage inventory** by purchasing or restocking items directly from the `AdminSweetCard`.
+
+---
+
+## Live Website
+
+[Link to the deployed website will be added here]

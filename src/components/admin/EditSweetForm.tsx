@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sweet } from '@/components/SweetCard';
 
 interface EditSweetFormProps {
@@ -34,26 +35,94 @@ export const EditSweetForm = ({ sweet, onUpdate, onCancel }: EditSweetFormProps)
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Edit Sweet</h2>
-      <div className="grid grid-cols-2 gap-4">
-        <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <Input placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} required />
-        <Input placeholder="Price" type="number" value={price} onChange={(e) => setPrice(parseFloat(e.target.value))} required />
-        <Input placeholder="Stock Quantity" type="number" value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value, 10))} required />
-        <Input placeholder="Image URL" value={image} onChange={(e) => setImage(e.target.value)} required className="col-span-2" />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="col-span-2 p-2 border rounded-md"
-          required
-        />
-      </div>
-      <div className="flex justify-end gap-4 mt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button type="submit">Update Sweet</Button>
-      </div>
-    </form>
+    <Card className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Edit Sweet</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label htmlFor="name">Name</label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="category">Category</label>
+              <Input
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="price">Price</label>
+              <Input
+                id="price"
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(parseFloat(e.target.value))}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="quantity">Stock Quantity</label>
+              <Input
+                id="quantity"
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
+                required
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="image">Image URL</label>
+              <Input
+                id="image"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                required
+              />
+              {/* ✅ Live Preview of image */}
+              {image && (
+                <img
+                  src={image}
+                  alt="Preview"
+                  className="mt-2 w-full h-40 object-cover rounded-md border"
+                />
+              )}
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full p-2 border rounded-md bg-background"
+                rows={3}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-4 mt-6">
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit">Update Sweet</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };

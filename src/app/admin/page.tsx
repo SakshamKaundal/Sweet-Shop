@@ -6,6 +6,13 @@ import { AddSweetForm } from '@/components/admin/AddSweetForm';
 import { EditSweetForm } from '@/components/admin/EditSweetForm';
 import { Sweet } from '@/components/SweetCard';
 import { Button } from '@/components/ui/button';
+import { Pacifico } from "next/font/google";
+
+// 🎨 Import Pacifico font
+const pacifico = Pacifico({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 interface ApiSweet {
   id: number;
@@ -34,7 +41,7 @@ export default function AdminPage() {
         image: sweet.photoUrl || '/images/default-sweet.jpg',
         category: sweet.category,
         quantity: sweet.stock,
-        rating: 4.5, // Hardcoded rating
+        rating: 4.5,
       }));
       setSweets(mappedSweets);
     } catch (error) {
@@ -80,16 +87,14 @@ export default function AdminPage() {
   const handleUpdate = async (updatedSweet: Sweet) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/sweets/update/${updatedSweet.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(updatedSweet),
-        }
-      );
+      const response = await fetch(`/api/sweets/update/${updatedSweet.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedSweet),
+      });
       if (response.ok) {
         fetchSweets();
         setEditingSweet(null);
@@ -105,14 +110,12 @@ export default function AdminPage() {
     if (window.confirm('Are you sure you want to delete this sweet?')) {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`/api/sweets/delete/${sweetId}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`/api/sweets/delete/${sweetId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         if (response.ok) {
           fetchSweets();
         } else {
@@ -127,7 +130,10 @@ export default function AdminPage() {
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-extrabold tracking-tight">Admin Dashboard (For Admin Users)</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight">
+          <span className={`${pacifico.className} text-pink-500`}>Admin</span>{" "}
+          Dashboard
+        </h1>
         {!showAddForm && !editingSweet && (
           <Button onClick={() => setShowAddForm(true)}>Add New Sweet</Button>
         )}
