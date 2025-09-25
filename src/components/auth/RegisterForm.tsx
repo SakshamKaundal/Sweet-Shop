@@ -28,8 +28,12 @@ export function RegisterForm() {
       // ✅ Registration successful
       alert("Registration successful! Please log in.");
       router.push("/login"); // redirect to login
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }

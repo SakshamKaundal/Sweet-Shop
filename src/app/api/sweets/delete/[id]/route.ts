@@ -12,7 +12,7 @@ interface DecodedToken {
   exp: number;
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, context: { params: { id: string } }) {
   try {
     const authHeader = req.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
@@ -22,7 +22,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const id = parseInt(params.id, 10);
+    const id = parseInt(context.params.id, 10);
     const [deleted] = await db.delete(products).where(eq(products.id, id)).returning();
 
     if (!deleted) {

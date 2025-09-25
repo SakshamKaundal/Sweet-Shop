@@ -74,7 +74,7 @@ describe("Sweets - Restock (Admin only)", () => {
       body: JSON.stringify({ quantity: 10 }),
     });
 
-    const res = await POST(req, { params: { id: sweetId.toString() } } as any);
+    const res = await POST(req, { params: { id: sweetId.toString() } });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -89,7 +89,7 @@ describe("Sweets - Restock (Admin only)", () => {
       body: JSON.stringify({ quantity: 5 }),
     });
 
-    const res = await POST(req, { params: { id: sweetId.toString() } } as any);
+    const res = await POST(req, { params: { id: sweetId.toString() } });
     const json = await res.json();
 
     expect(res.status).toBe(403);
@@ -103,7 +103,7 @@ describe("Sweets - Restock (Admin only)", () => {
       body: JSON.stringify({ quantity: 5 }),
     });
 
-    const res = await POST(req, { params: { id: "9999" } } as any);
+    const res = await POST(req, { params: { id: "9999" } });
     const json = await res.json();
 
     expect(res.status).toBe(404);

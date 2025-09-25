@@ -19,6 +19,7 @@ export async function middleware(req: NextRequest) {
     /^\/api\/sweets\/.*$/,
     /^\/api\/inventory\/.*$/,
     /\/admin/,
+    /\/sweets/,
   ];
 
   // 2. Check if the route is protected
@@ -71,5 +72,6 @@ export const config = {
     '/api/sweets/:path*',
     '/api/inventory/:path*',
     '/admin/:path*',
+    '/sweets/:path*',
   ],
 };

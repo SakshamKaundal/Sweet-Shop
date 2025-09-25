@@ -2,6 +2,10 @@ import { GET } from "../../api/sweets/getAll/route";
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
 
+interface Sweet {
+  name: string;
+}
+
 describe("Sweets - List", () => {
   beforeEach(async () => {
     await db.delete(products);
@@ -36,7 +40,7 @@ describe("Sweets - List", () => {
     expect(Array.isArray(json.sweets)).toBe(true);
     expect(json.sweets.length).toBe(2);
 
-    const names = json.sweets.map((s: any) => s.name);
+    const names = json.sweets.map((s: Sweet) => s.name);
     expect(names).toContain("Gulab Jamun");
     expect(names).toContain("Rasgulla");
   });

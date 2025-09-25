@@ -30,7 +30,7 @@ describe("Sweets - Update", () => {
       }),
     });
 
-    const res = await PUT(req, { params: { id: sweetId.toString() } } as any);
+    const res = await PUT(req, { params: { id: sweetId.toString() } });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -45,7 +45,7 @@ describe("Sweets - Update", () => {
       body: JSON.stringify({ name: "Does Not Exist" }),
     });
 
-    const res = await PUT(req, { params: { id: "9999" } } as any);
+    const res = await PUT(req, { params: { id: "9999" } });
     const json = await res.json();
 
     expect(res.status).toBe(404);

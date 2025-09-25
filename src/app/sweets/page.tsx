@@ -7,10 +7,19 @@ import { SweetFilters } from '@/components/SweetFilter';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
+interface ApiSweet {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  photoUrl: string;
+  category: string;
+  stock: number;
+}
+
 export default function SweetsPage() {
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [filteredSweets, setFilteredSweets] = useState<Sweet[]>([]);
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortBy, setSortBy] = useState<string>('name');
@@ -21,7 +30,7 @@ export default function SweetsPage() {
       try {
         const response = await fetch('/api/sweets/getAll');
         const data = await response.json();
-        const mappedSweets = data.sweets.map((sweet: any) => ({
+        const mappedSweets = data.sweets.map((sweet: ApiSweet) => ({
           id: sweet.id.toString(),
           name: sweet.name,
           description: sweet.description,
@@ -74,12 +83,6 @@ export default function SweetsPage() {
     setFilteredSweets(sortedSweets);
   }, [sweets, selectedCategory, sortBy, searchQuery]);
 
-  const toggleFavorite = (id: string) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
-    );
-  };
-
   const handleAddToCart = (sweet: Sweet) => {
     console.log('Added to cart:', sweet.name);
   };
@@ -92,18 +95,17 @@ export default function SweetsPage() {
     setSortBy(sort);
   };
 
-  const handlePurchaseSuccess = (updatedSweet: Sweet) => {
-    const apiSweet = updatedSweet as any;
+  const handlePurchaseSuccess = (updatedSweet: ApiSweet) => {
     const updatedSweets = sweets.map((s) => {
-      if (s.id === apiSweet.id.toString()) {
+      if (s.id === updatedSweet.id.toString()) {
         return {
           ...s,
-          quantity: apiSweet.stock,
-          name: apiSweet.name,
-          description: apiSweet.description,
-          price: parseFloat(apiSweet.price),
-          image: apiSweet.photoUrl || '/images/default-sweet.jpg',
-          category: apiSweet.category,
+          quantity: updatedSweet.stock,
+          name: updatedSweet.name,
+          description: updatedSweet.description,
+          price: parseFloat(updatedSweet.price),
+          image: updatedSweet.photoUrl || '/images/default-sweet.jpg',
+          category: updatedSweet.category,
         };
       }
       return s;
@@ -139,7 +141,7 @@ export default function SweetsPage() {
         <SweetsGrid
           sweets={filteredSweets}
           onAddToCart={handleAddToCart}
-          onToggleFavorite={toggleFavorite}
+          onToggleFavorite={() => {}}
           onPurchaseSuccess={handlePurchaseSuccess}
         />
       </main>

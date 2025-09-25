@@ -1,11 +1,10 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import heroImage from "@/assets/hero-sweets.jpg";
 
 export const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-hero">
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-30">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="space-y-6">
@@ -19,14 +18,14 @@ export const HeroSection = () => {
               Discover our handcrafted collection of premium sweets, chocolates, and confections. 
               Made with love and the finest ingredients.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="bg-gradient-primary hover:opacity-90 text-lg px-8 py-6 shadow-medium">
                 Shop Now
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-6 border-2 hover:bg-accent">
                 View Catalog
               </Button>
-            </div>
+            </div> */}
             <div className="flex items-center space-x-6 pt-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-primary">500+</div>
@@ -49,13 +48,13 @@ export const HeroSection = () => {
               <Image
                 src={heroImage}
                 alt="Beautiful collection of artisanal sweets and confections"
-                className="w-full h-[500px] object-cover"
+                className="w-full h-[400px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
             
             {/* Floating Cards */}
-            <div className="absolute -bottom-4 -left-4 bg-card rounded-xl p-4 shadow-medium">
+            <div className="absolute -bottom-4 -left-4 bg-card bg-white rounded-xl p-4 shadow-medium text-black">
               <div className="flex items-center space-x-3">
                 <div className="text-2xl">🍫</div>
                 <div>
@@ -65,7 +64,7 @@ export const HeroSection = () => {
               </div>
             </div>
             
-            <div className="absolute -top-4 -right-4 bg-card rounded-xl p-4 shadow-medium">
+            <div className="absolute -top-4 -right-4 bg-card bg-white rounded-xl p-4 shadow-medium text-black">
               <div className="flex items-center space-x-3">
                 <div className="text-2xl">🧁</div>
                 <div>

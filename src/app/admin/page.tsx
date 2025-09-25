@@ -7,6 +7,16 @@ import { EditSweetForm } from '@/components/admin/EditSweetForm';
 import { Sweet } from '@/components/SweetCard';
 import { Button } from '@/components/ui/button';
 
+interface ApiSweet {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  photoUrl: string;
+  category: string;
+  stock: number;
+}
+
 export default function AdminPage() {
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -16,7 +26,7 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/sweets/getAll');
       const data = await response.json();
-      const mappedSweets = data.sweets.map((sweet: any) => ({
+      const mappedSweets = data.sweets.map((sweet: ApiSweet) => ({
         id: sweet.id.toString(),
         name: sweet.name,
         description: sweet.description,
@@ -36,9 +46,18 @@ export default function AdminPage() {
     fetchSweets();
   }, []);
 
-  const handleAdd = async (newSweet: Omit<Sweet, 'id' | 'rating'>) => {
+  const handleAdd = async (formData: Omit<Sweet, 'id' | 'rating'> & { minStock: number }) => {
     try {
       const token = localStorage.getItem("token");
+      const newSweet = {
+        name: formData.name,
+        description: formData.description,
+        price: formData.price,
+        photoUrl: formData.image,
+        category: formData.category,
+        stock: formData.quantity,
+        minStock: formData.minStock,
+      };
       const response = await fetch('/api/sweets/create', {
         method: 'POST',
         headers: {

@@ -64,7 +64,7 @@ describe("Sweets - Delete", () => {
       headers: { Authorization: `Bearer ${adminToken}` },
     });
 
-    const res = await DELETE(req, { params: { id: sweetId.toString() } } as any);
+    const res = await DELETE(req, { params: { id: sweetId.toString() } });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -80,7 +80,7 @@ describe("Sweets - Delete", () => {
       headers: { Authorization: `Bearer ${customerToken}` },
     });
 
-    const res = await DELETE(req, { params: { id: sweetId.toString() } } as any);
+    const res = await DELETE(req, { params: { id: sweetId.toString() } });
     const json = await res.json();
 
     expect(res.status).toBe(403);
@@ -93,7 +93,7 @@ describe("Sweets - Delete", () => {
       headers: { Authorization: `Bearer ${adminToken}` },
     });
 
-    const res = await DELETE(req, { params: { id: "9999" } } as any);
+    const res = await DELETE(req, { params: { id: "9999" } });
     const json = await res.json();
 
     expect(res.status).toBe(404);

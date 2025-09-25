@@ -39,15 +39,20 @@ export function LoginForm() {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.token); // ✅ save token
+      localStorage.setItem("token", data.token);
+      window.dispatchEvent(new CustomEvent('loginStateChange'));
       setLoggedIn(true);
       if (data.user.role === 'admin') {
         router.push("/admin");
       } else {
         router.push("/sweets"); 
       }
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -63,7 +68,7 @@ export function LoginForm() {
         } else {
           router.push("/sweets");
         }
-      } catch (error) {
+      } catch {
         console.error("Invalid token");
         router.push("/sweets");
       }

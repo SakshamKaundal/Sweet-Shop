@@ -3,9 +3,9 @@ import { products } from "@/app/db/schema";
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, context: { params: { id: string } }) {
   try {
-    const id = parseInt(params.id, 10);
+    const id = parseInt(context.params.id, 10);
     const body = await req.json();
 
     // check if sweet exists
