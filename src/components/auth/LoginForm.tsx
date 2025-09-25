@@ -36,7 +36,7 @@ export function LoginForm() {
       const data = await res.json();
       localStorage.setItem("token", data.token); // ✅ save token
       setLoggedIn(true);
-      router.push("/"); // go home
+      router.push("/sweets"); 
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -44,10 +44,9 @@ export function LoginForm() {
     }
   }
 
-  function handleLogout() {
-    localStorage.removeItem("token"); // ✅ clear token
-    setLoggedIn(false);
-    router.push("/login");
+  function handleRoute() {
+
+    router.push("/sweets");
   }
 
   // ✅ if logged in → show logout button
@@ -56,10 +55,10 @@ export function LoginForm() {
       <div className="space-y-4">
         <p className="text-center text-green-600">You are logged in!</p>
         <button
-          onClick={handleLogout}
+          onClick={handleRoute}
           className="w-full rounded-lg bg-red-500 px-4 py-2 text-white font-medium hover:bg-red-600"
         >
-          Logout
+          Enter Sweets page
         </button>
       </div>
     );
