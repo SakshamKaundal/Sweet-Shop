@@ -4,12 +4,20 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 
+interface DecodedToken {
+  id: number;
+  email: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
+
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
     // ✅ Auth check
     const authHeader = req.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
-    const decoded: any = jwt.decode(token!)
+    const decoded = jwt.decode(token!) as DecodedToken;
 
     if (decoded.role !== "customer") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });

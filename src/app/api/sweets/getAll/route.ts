@@ -2,7 +2,7 @@ import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
 import { NextResponse } from "next/server";
 
-export async function GET(req : Request) {
+export async function GET() {
   try {
     const sweets = await db.select().from(products);
     return NextResponse.json({ sweets }, { status: 200 });

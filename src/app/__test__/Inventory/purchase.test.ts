@@ -6,6 +6,12 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
+interface PurchaseResponse {
+    message?: string;
+    sweet?: { stock: number };
+    error?: string;
+}
+
 describe("Sweets - Purchase", () => {
   let sweetId: number;
   let customerToken: string;
@@ -49,12 +55,12 @@ describe("Sweets - Purchase", () => {
       body: JSON.stringify({ quantity: 3 }),
     });
 
-    const res = await POST(req, { params: { id: sweetId.toString() } } as any);
-    const json = await res.json();
+    const res = await POST(req, { params: { id: sweetId.toString() } });
+    const json: PurchaseResponse = await res.json();
 
     expect(res.status).toBe(200);
     expect(json.message).toBe("Purchase successful");
-    expect(json.sweet.stock).toBe(7); // 10 - 3 = 7
+    expect(json.sweet?.stock).toBe(7); // 10 - 3 = 7
   });
 
   it("should block if not enough stock", async () => {
@@ -64,8 +70,8 @@ describe("Sweets - Purchase", () => {
       body: JSON.stringify({ quantity: 20 }),
     });
 
-    const res = await POST(req, { params: { id: sweetId.toString() } } as any);
-    const json = await res.json();
+    const res = await POST(req, { params: { id: sweetId.toString() } });
+    const json: PurchaseResponse = await res.json();
 
     expect(res.status).toBe(400);
     expect(json.error).toBe("Not enough stock");
@@ -78,8 +84,8 @@ describe("Sweets - Purchase", () => {
       body: JSON.stringify({ quantity: 1 }),
     });
 
-    const res = await POST(req, { params: { id: "9999" } } as any);
-    const json = await res.json();
+    const res = await POST(req, { params: { id: "9999" } });
+    const json: PurchaseResponse = await res.json();
 
     expect(res.status).toBe(404);
     expect(json.error).toBe("Sweet not found");

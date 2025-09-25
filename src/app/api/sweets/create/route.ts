@@ -1,6 +1,6 @@
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 // Define the validation schema using Zod
