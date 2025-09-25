@@ -14,20 +14,20 @@ export const SweetFilters = ({
   selectedCategory,
   onCategoryChange,
   sortBy,
-  onSortChange
+  onSortChange,
 }: SweetFiltersProps) => {
   const sortOptions = [
     { value: "name", label: "Name" },
-    { value: "price-low", label: "Price: Low to High" },
-    { value: "price-high", label: "Price: High to Low" },
+    { value: "price-low", label: "Price: Low → High" },
+    { value: "price-high", label: "Price: High → Low" },
     { value: "rating", label: "Rating" },
   ];
 
   return (
-    <div className="space-y-6 p-6 bg-card rounded-xl shadow-soft border">
+    <div className="space-y-8 p-6 bg-card rounded-2xl border shadow-sm">
       {/* Categories */}
       <div>
-        <h3 className="font-semibold text-lg mb-4">Categories</h3>
+        <h3 className="font-semibold text-lg mb-3">Categories</h3>
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <Button
@@ -35,11 +35,11 @@ export const SweetFilters = ({
               variant={selectedCategory === category ? "default" : "outline"}
               size="sm"
               onClick={() => onCategoryChange(category)}
-              className={`${
+              className={`rounded-full px-4 py-1 text-sm ${
                 selectedCategory === category
-                  ? "bg-gradient-primary text-primary-foreground"
-                  : "hover:bg-accent"
-              } transition-all duration-200`}
+                  ? "bg-gradient-primary text-primary-foreground shadow"
+                  : "hover:bg-muted"
+              } transition`}
             >
               {category}
             </Button>
@@ -49,7 +49,7 @@ export const SweetFilters = ({
 
       {/* Sort Options */}
       <div>
-        <h3 className="font-semibold text-lg mb-4">Sort By</h3>
+        <h3 className="font-semibold text-lg mb-3">Sort By</h3>
         <div className="grid grid-cols-2 gap-2">
           {sortOptions.map((option) => (
             <Button
@@ -57,11 +57,11 @@ export const SweetFilters = ({
               variant={sortBy === option.value ? "default" : "outline"}
               size="sm"
               onClick={() => onSortChange(option.value)}
-              className={`${
+              className={`rounded-lg ${
                 sortBy === option.value
-                  ? "bg-gradient-secondary text-secondary-foreground"
+                  ? "bg-gradient-secondary text-secondary-foreground shadow"
                   : "hover:bg-muted"
-              } text-xs transition-all duration-200`}
+              } text-xs transition`}
             >
               {option.label}
             </Button>
@@ -72,16 +72,24 @@ export const SweetFilters = ({
       {/* Active Filters */}
       {(selectedCategory !== "All" || sortBy !== "name") && (
         <div>
-          <h3 className="font-semibold text-lg mb-4">Active Filters</h3>
+          <h3 className="font-semibold text-lg mb-3">Active Filters</h3>
           <div className="flex flex-wrap gap-2">
             {selectedCategory !== "All" && (
-              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground">
+              <Badge
+                variant="secondary"
+                className="cursor-pointer rounded-full px-3 py-1 hover:bg-destructive hover:text-destructive-foreground transition"
+                onClick={() => onCategoryChange("All")}
+              >
                 Category: {selectedCategory} ×
               </Badge>
             )}
             {sortBy !== "name" && (
-              <Badge variant="secondary" className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground">
-                Sort: {sortOptions.find(opt => opt.value === sortBy)?.label} ×
+              <Badge
+                variant="secondary"
+                className="cursor-pointer rounded-full px-3 py-1 hover:bg-destructive hover:text-destructive-foreground transition"
+                onClick={() => onSortChange("name")}
+              >
+                Sort: {sortOptions.find((opt) => opt.value === sortBy)?.label} ×
               </Badge>
             )}
           </div>
