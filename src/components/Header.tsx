@@ -40,17 +40,6 @@ export const Header = ({ onSearch }: HeaderProps) => {
                 </h1>
             </div>
 
-            {/* Search Bar */}
-            {/* <div className="flex-1 max-w-md mx-8">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                        placeholder="Search for your favorite sweets..."
-                        className="pl-10 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-ring"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearch?.(e.target.value)} />
-                </div>
-            </div> */}
-
             {/* Actions */}
             <div className="flex items-center space-x-2">
                 <Button variant="ghost" size="icon" className="relative">

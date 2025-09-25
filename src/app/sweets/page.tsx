@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { SweetsGrid } from '@/components/SweetsGrid';
 import { Sweet } from '@/components/SweetCard';
 import { SweetFilters } from '@/components/SweetFilter';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 export default function SweetsPage() {
   const [sweets, setSweets] = useState<Sweet[]>([]);
@@ -12,6 +14,7 @@ export default function SweetsPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortBy, setSortBy] = useState<string>('name');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchSweets = async () => {
@@ -45,6 +48,12 @@ export default function SweetsPage() {
       sortedSweets = sortedSweets.filter(sweet => sweet.category === selectedCategory);
     }
 
+    if (searchQuery) {
+      sortedSweets = sortedSweets.filter(sweet =>
+        sweet.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
     switch (sortBy) {
       case 'name':
         sortedSweets.sort((a, b) => a.name.localeCompare(b.name));
@@ -63,7 +72,7 @@ export default function SweetsPage() {
     }
 
     setFilteredSweets(sortedSweets);
-  }, [sweets, selectedCategory, sortBy]);
+  }, [sweets, selectedCategory, sortBy, searchQuery]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -115,7 +124,18 @@ export default function SweetsPage() {
       </aside>
 
       <main className="flex-1">
-        <h1 className="text-4xl font-extrabold mb-8 tracking-tight">Our Sweet Collection</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-extrabold tracking-tight">Our Sweet Collection</h1>
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search for your favorite sweets..."
+              className="pl-10 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-ring"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery}
+            />
+          </div>
+        </div>
         <SweetsGrid
           sweets={filteredSweets}
           onAddToCart={handleAddToCart}

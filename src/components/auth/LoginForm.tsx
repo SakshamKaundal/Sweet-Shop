@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import jwt from "jsonwebtoken";
+
+interface DecodedToken {
+  role: string;
+}
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -36,7 +41,11 @@ export function LoginForm() {
       const data = await res.json();
       localStorage.setItem("token", data.token); // ✅ save token
       setLoggedIn(true);
-      router.push("/sweets"); 
+      if (data.user.role === 'admin') {
+        router.push("/admin");
+      } else {
+        router.push("/sweets"); 
+      }
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -45,8 +54,22 @@ export function LoginForm() {
   }
 
   function handleRoute() {
-
-    router.push("/sweets");
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwt.decode(token) as DecodedToken;
+        if (decoded.role === 'admin') {
+          router.push("/admin");
+        } else {
+          router.push("/sweets");
+        }
+      } catch (error) {
+        console.error("Invalid token");
+        router.push("/sweets");
+      }
+    } else {
+      router.push("/sweets");
+    }
   }
 
   // ✅ if logged in → show logout button
@@ -58,7 +81,7 @@ export function LoginForm() {
           onClick={handleRoute}
           className="w-full rounded-lg bg-red-500 px-4 py-2 text-white font-medium hover:bg-red-600"
         >
-          Enter Sweets page
+          Enter Dashboard
         </button>
       </div>
     );
