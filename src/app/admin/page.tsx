@@ -6,6 +6,7 @@ import { AddSweetForm } from '@/components/admin/AddSweetForm';
 import { EditSweetForm } from '@/components/admin/EditSweetForm';
 import { Sweet } from '@/components/SweetCard';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Pacifico } from "next/font/google";
 
 // 🎨 Import Pacifico font
@@ -140,7 +141,17 @@ export default function AdminPage() {
       </div>
 
       {showAddForm && <AddSweetForm onAdd={handleAdd} onCancel={() => setShowAddForm(false)} />}
-      {editingSweet && <EditSweetForm sweet={editingSweet} onUpdate={handleUpdate} onCancel={() => setEditingSweet(null)} />}
+      
+      {editingSweet && (
+        <Dialog open={!!editingSweet} onOpenChange={() => setEditingSweet(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Sweet</DialogTitle>
+            </DialogHeader>
+            <EditSweetForm sweet={editingSweet} onUpdate={handleUpdate} onCancel={() => setEditingSweet(null)} />
+          </DialogContent>
+        </Dialog>
+      )}
 
       <div className="mt-8">
         <AdminSweetsGrid sweets={sweets} onEdit={setEditingSweet} onDelete={handleDelete} />

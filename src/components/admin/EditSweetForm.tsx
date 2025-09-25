@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sweet } from '@/components/SweetCard';
+import Image from 'next/image';
 
 interface EditSweetFormProps {
   sweet: Sweet;
@@ -35,91 +36,108 @@ export const EditSweetForm = ({ sweet, onUpdate, onCancel }: EditSweetFormProps)
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Edit Sweet</CardTitle>
+    <Card className="max-w-2xl mx-auto bg-gray-900/80 border border-gray-800 shadow-lg backdrop-blur-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl font-bold text-white">Edit Sweet</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label htmlFor="name">Name</label>
+            {/* Name */}
+            <div className="space-y-1">
+              <label htmlFor="name" className="text-sm font-medium text-gray-300">Name</label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                className="bg-gray-800 border-gray-700 text-white"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="category">Category</label>
+            {/* Category */}
+            <div className="space-y-1">
+              <label htmlFor="category" className="text-sm font-medium text-gray-300">Category</label>
               <Input
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
+                className="bg-gray-800 border-gray-700 text-white"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="price">Price</label>
+            {/* Price */}
+            <div className="space-y-1">
+              <label htmlFor="price" className="text-sm font-medium text-gray-300">Price</label>
               <Input
                 id="price"
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(parseFloat(e.target.value))}
                 required
+                className="bg-gray-800 border-gray-700 text-white"
               />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="quantity">Stock Quantity</label>
+            {/* Quantity */}
+            <div className="space-y-1">
+              <label htmlFor="quantity" className="text-sm font-medium text-gray-300">Stock Quantity</label>
               <Input
                 id="quantity"
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
                 required
+                className="bg-gray-800 border-gray-700 text-white"
               />
             </div>
 
-            <div className="space-y-2 md:col-span-2">
-              <label htmlFor="image">Image URL</label>
+            {/* Image */}
+            <div className="space-y-1 md:col-span-2">
+              <label htmlFor="image" className="text-sm font-medium text-gray-300">Image URL</label>
               <Input
                 id="image"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 required
+                className="bg-gray-800 border-gray-700 text-white"
               />
-              {/* ✅ Live Preview of image */}
               {image && (
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="mt-2 w-full h-40 object-cover rounded-md border"
-                />
+                <div className="mt-3 relative w-full h-48">
+                  <Image
+                    src={image}
+                    alt="Preview"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-lg border border-gray-700 shadow-md"
+                  />
+                </div>
               )}
             </div>
 
-            <div className="space-y-2 md:col-span-2">
-              <label htmlFor="description">Description</label>
+            {/* Description */}
+            <div className="space-y-1 md:col-span-2">
+              <label htmlFor="description" className="text-sm font-medium text-gray-300">Description</label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-2 border rounded-md bg-background"
+                className="w-full rounded-md border border-gray-700 bg-gray-800 text-white p-3 text-sm focus:ring-2 focus:ring-pink-500 focus:outline-none resize-none"
                 rows={3}
                 required
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 mt-6">
-            <Button type="button" variant="outline" onClick={onCancel}>
+          {/* Actions */}
+          <div className="flex justify-end gap-4">
+            <Button type="button" variant="outline" onClick={onCancel} className="border-gray-700 text-gray-300 hover:bg-gray-800">
               Cancel
             </Button>
-            <Button type="submit">Update Sweet</Button>
+            <Button type="submit" className="bg-pink-600 hover:bg-pink-500 text-white">
+              Update Sweet
+            </Button>
           </div>
         </form>
       </CardContent>

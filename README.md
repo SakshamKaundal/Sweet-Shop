@@ -229,6 +229,13 @@ The application includes a comprehensive test suite to ensure code quality and c
         -   **Manage inventory** by purchasing or restocking items directly from the `AdminSweetCard`.
 
 ---
+Some Screen Shots from my WebSite
+
+### Homepage
+![Sweet Screenshot](./public/landing.png)
+
+### Dashboard
+![Sweet Screenshot](./public/reg.png)
 
 ## Live Website
 

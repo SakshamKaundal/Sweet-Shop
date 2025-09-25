@@ -21,7 +21,7 @@ interface SweetCardProps {
   sweet: Sweet;
   onAddToCart: (sweet: Sweet) => void;
   onToggleFavorite?: (sweetId: string) => void;
-  onPurchaseSuccess?: (updatedSweet: any) => void; // note: we remap in parent
+  onPurchaseSuccess?: (updatedSweet: Sweet) => void; // note: we remap in parent
 }
 
 export const SweetCard = ({

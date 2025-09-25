@@ -7,7 +7,7 @@ export default function AboutPage() {
     <div className="min-h-screen flex items-center justify-center bg-background py-16">
       <div className="max-w-2xl w-full bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-8 shadow-xl text-center space-y-6">
         <div className="text-5xl">🍭</div>
-        <h1 className="text-4xl font-extrabold text-white">Hey, I'm Saksham!</h1>
+        <h1 className="text-4xl font-extrabold text-white">Hey, I&apos;m Saksham!</h1>
         <p className="text-gray-300 text-lg">
           I write code, eat sweets, and sometimes try to do both at the same time.  
           (Spoiler: the keyboard doesn’t like sugar 🧁💻)
@@ -22,7 +22,7 @@ export default function AboutPage() {
           >
             GitHub
           </Link>
-          . It's like a candy shop, but with bugs instead of chocolates 🐛🍫.
+          . It&apos;s like a candy shop, but with bugs instead of chocolates 🐛🍫.
         </p>
         <p className="text-gray-300">
           Goal: build cool stuff, make people smile, and never run out of desserts.  
