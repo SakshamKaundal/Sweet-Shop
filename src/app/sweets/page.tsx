@@ -84,15 +84,27 @@ export default function SweetsPage() {
   };
 
   const handlePurchaseSuccess = (updatedSweet: Sweet) => {
-    const updatedSweets = sweets.map((s) =>
-      s.id === updatedSweet.id ? updatedSweet : s
-    );
+    const apiSweet = updatedSweet as any;
+    const updatedSweets = sweets.map((s) => {
+      if (s.id === apiSweet.id.toString()) {
+        return {
+          ...s,
+          quantity: apiSweet.stock,
+          name: apiSweet.name,
+          description: apiSweet.description,
+          price: parseFloat(apiSweet.price),
+          image: apiSweet.photoUrl || '/images/default-sweet.jpg',
+          category: apiSweet.category,
+        };
+      }
+      return s;
+    });
     setSweets(updatedSweets);
   };
 
   return (
-    <div className="flex gap-6 p-6">
-      <aside className="w-60 bg-background p-4 rounded-xl border h-fit">
+    <div className="flex flex-col md:flex-row gap-8 p-8">
+      <aside className="w-full md:w-80 bg-card p-6 rounded-2xl border shadow-lg h-fit">
         <SweetFilters 
           categories={categories}
           selectedCategory={selectedCategory}
@@ -103,7 +115,7 @@ export default function SweetsPage() {
       </aside>
 
       <main className="flex-1">
-        <h1 className="text-2xl font-bold mb-6">All Sweets</h1>
+        <h1 className="text-4xl font-extrabold mb-8 tracking-tight">Our Sweet Collection</h1>
         <SweetsGrid
           sweets={filteredSweets}
           onAddToCart={handleAddToCart}

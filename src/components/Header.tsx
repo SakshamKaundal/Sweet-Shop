@@ -4,6 +4,7 @@ import { Search, ShoppingCart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
 
 interface HeaderProps {
   onSearch?: (query: string) => void;
@@ -11,6 +12,21 @@ interface HeaderProps {
 
 export const Header = ({ onSearch }: HeaderProps) => {
     const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem("token");
+            setIsLoggedIn(!!token);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        router.push("/login");
+    };
+
     return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -46,12 +62,20 @@ export const Header = ({ onSearch }: HeaderProps) => {
                 <Button variant="ghost" size="icon">
                     <User className="h-5 w-5" />
                 </Button>
-                <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => router.push("/login")} >
-                    Login
-                </Button>
-                <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => router.push("/register")} >
-                    Register
-                </Button>
+                {isLoggedIn ? (
+                    <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={handleLogout}>
+                        Logout
+                    </Button>
+                ) : (
+                    <>
+                        <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => router.push("/login")} >
+                            Login
+                        </Button>
+                        <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => router.push("/register")} >
+                            Register
+                        </Button>
+                    </>
+                )}
             </div>
         </div>
     </header>

@@ -82,69 +82,82 @@ export const SweetCard = ({ sweet, onAddToCart, onToggleFavorite, onPurchaseSucc
   };
 
   return (
-    <Card className="group overflow-hidden rounded-2xl bg-card border shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-  <div className="relative aspect-square overflow-hidden rounded-t-2xl">
-    <Image
-      src={imageSrc}
-      alt={sweet.name}
-      fill
-      className="object-cover group-hover:scale-105 transition-transform duration-300"
-    />
-    {/* Favorite Button */}
-    <Button
-      variant="ghost"
-      size="icon"
-      className="absolute top-3 right-3 bg-background/80 hover:bg-background/90 backdrop-blur-sm rounded-full shadow-md"
-      onClick={() => onToggleFavorite?.(sweet.id)}
-    >
-      <Heart className="h-5 w-5" />
-    </Button>
-    {/* Category Badge */}
-    <Badge className="absolute top-3 left-3 bg-gradient-secondary text-secondary-foreground rounded-full px-3 py-1 text-xs shadow">
-      {sweet.category}
-    </Badge>
-  </div>
-
-  <CardContent className="p-4">
-    <div className="flex justify-between items-start mb-2">
-      <h3 className="font-semibold text-lg line-clamp-1">{sweet.name}</h3>
-      <span className="text-lg font-bold text-primary">${sweet.price.toFixed(2)}</span>
-    </div>
-    <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{sweet.description}</p>
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-1 text-yellow-500">
-        ⭐ <span className="text-sm font-medium text-foreground">{sweet.rating.toFixed(1)}</span>
+    <Card className="group overflow-hidden rounded-2xl bg-card border shadow-lg hover:shadow hover:shadow-fuchsia-200 transition-all duration-300 hover:-translate-y-1.5">
+      <div className="relative aspect-square overflow-hidden">
+        <Image
+          src={imageSrc}
+          alt={sweet.name}
+          fill
+          className="object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-3 right-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full text-white"
+          onClick={() => onToggleFavorite?.(sweet.id)}
+        >
+          <Heart className="h-5 w-5" />
+        </Button>
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+            <Badge variant="destructive" className="text-lg px-6 py-2 rounded-full">
+              Out of Stock
+            </Badge>
+          </div>
+        )}
+        <div className="absolute bottom-0 left-0 p-4">
+          <Badge className="bg-gradient-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm shadow-lg">
+            {sweet.category}
+          </Badge>
+        </div>
       </div>
-      <span className="text-xs text-muted-foreground">
-        {sweet.quantity > 0 ? `${sweet.quantity} left` : 'Out of stock'}
-      </span>
-    </div>
-  </CardContent>
-
-  <CardFooter className="p-4 pt-0 flex-col items-stretch gap-2">
-        <div className="flex items-center gap-2">
+      
+      <CardContent className="p-5">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-bold text-xl truncate">{sweet.name}</h3>
+          <span className="text-xl font-extrabold text-primary">${sweet.price.toFixed(2)}</span>
+        </div>
+        <p className="text-muted-foreground text-base line-clamp-2 mb-4">
+          {sweet.description}
+        </p>
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-1.5 text-yellow-400">
+            <span className="text-lg">⭐</span>
+            <span className="font-bold text-foreground">{sweet.rating.toFixed(1)}</span>
+          </div>
+          <span className="text-muted-foreground">
+            {sweet.quantity > 0 ? `${sweet.quantity} available` : 'None left'}
+          </span>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="p-5 pt-0">
+        <div className="flex items-center gap-3 w-full">
           <input
             type="number"
             min="1"
             max={sweet.quantity}
             value={quantity}
             onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
-            className="w-20 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+            className="w-24 text-center rounded-lg border-2 border-input bg-transparent px-3 py-2 font-semibold focus:ring-2 focus:ring-primary focus:outline-none transition"
             disabled={isOutOfStock}
           />
           <Button
-            className={`w-full ${
+            className={`w-full text-lg font-semibold rounded-xl ${
               isOutOfStock 
                 ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                : 'bg-gradient-primary hover:opacity-90'
+                : 'bg-gradient-primary text-primary-foreground hover:opacity-95 shadow-lg'
             } transition-all duration-300`}
             disabled={isOutOfStock || loading}
             onClick={handlePurchase}
+            size="lg"
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            {loading ? 'Purchasing...' : 'Purchase'}
+            <ShoppingCart className="h-5 w-5 mr-2.5" />
+            {loading ? 'Processing...' : 'Purchase'}
           </Button>
         </div>
       </CardFooter>
-</Card>)
+    </Card>
+  );
 };
