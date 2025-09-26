@@ -49,8 +49,8 @@ customer login : j@gmail.com
 
 Password for both : 123456
 
-admin is only one and is created my the developer only 
-normal login is default to customers
+admin is only one and is created by the developer,
+normal login is default customers
 
 ---
 ## Table of Contents
