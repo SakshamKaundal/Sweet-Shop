@@ -99,14 +99,14 @@ export async function middleware(req: NextRequest) {
     const response = NextResponse.redirect(new URL('/login', req.url));
     response.cookies.delete('token');
     
-    if (pathname.startsWith('/api')) {
-      console.log('[Middleware] API route with invalid token, returning 401.');
-      console.log('--- Middleware End ---');
-      return new NextResponse(
-        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
+    // if (pathname.startsWith('/api')) {
+    //   console.log('[Middleware] API route with invalid token, returning 401.');
+    //   console.log('--- Middleware End ---');
+    //   return new NextResponse(
+    //     JSON.stringify({ error: 'Unauthorized: Invalid token' }),
+    //     { status: 401, headers: { 'Content-Type': 'application/json' } }
+    //   );
+    // }
     
     console.log('[Middleware] Page route with invalid token, redirecting to /login and clearing cookie.');
     console.log('--- Middleware End ---');
