@@ -1,18 +1,34 @@
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+
+interface DecodedToken {
+  role: string;
+}
 
 export async function PUT(
-  req: Request,
-  context: { params: Promise<{ id: string }> } // 👈 make params async
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params; // 👈 await it
+    const token = req.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    if (decoded.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { id } = await context.params;
     const parsedId = parseInt(id, 10);
     const body = await req.json();
 
-    // check if sweet exists
     const sweet = await db.select().from(products).where(eq(products.id, parsedId));
     if (sweet.length === 0) {
       return NextResponse.json({ error: "Sweet not found" }, { status: 404 });
@@ -35,6 +51,9 @@ export async function PUT(
     return NextResponse.json({ sweet: updated }, { status: 200 });
   } catch (err) {
     console.error("Error updating sweet:", err);
+    if (err instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 }

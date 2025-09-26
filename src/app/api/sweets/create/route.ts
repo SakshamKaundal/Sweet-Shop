@@ -1,7 +1,14 @@
 import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+
+interface DecodedToken {
+  role: string;
+}
 
 // Define the validation schema using Zod
 const createProductSchema = z.object({
@@ -14,8 +21,18 @@ const createProductSchema = z.object({
   minStock: z.number().int().nonnegative().default(5),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    const token = req.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    if (decoded.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await req.json();
 
     // Validate the request body against the schema
@@ -45,6 +62,9 @@ export async function POST(req: Request) {
     // Return the created product with a 201 status code
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     // Handle potential JSON parsing errors or other unexpected issues
     if (error instanceof SyntaxError) {
       return NextResponse.json(

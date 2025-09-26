@@ -3,6 +3,7 @@
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Pacifico } from "next/font/google";
 
@@ -11,8 +12,51 @@ const pacifico = Pacifico({
   subsets: ["latin"],
 });
 
+interface UserData {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export const Header = () => {
   const router = useRouter();
+  const [user, setUser] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      } catch {
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+
+    // Listen for login/logout events to re-fetch user
+    window.addEventListener('loginStateChange', fetchUser);
+    window.addEventListener('logout', () => setUser(null));
+
+    return () => {
+      window.removeEventListener('loginStateChange', fetchUser);
+      window.removeEventListener('logout', () => setUser(null));
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (res.ok) {
+      window.dispatchEvent(new CustomEvent('logout'));
+      router.push("/login");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 border-black supports-[backdrop-filter]:bg-background/60 ">
@@ -40,9 +84,27 @@ export const Header = () => {
           <Button variant="ghost" size="icon">
             <User className="h-5 w-5" />
           </Button>
-          <Button className="bg-gradient-primary hover:opacity-90 transition-opacity bg-pink-500" onClick={() => router.push("/login")}>
-            Login
-          </Button>
+          {user ? (
+            <>
+              {user.role === 'admin' ? (
+                <Button onClick={() => router.push("/admin")}>Admin Dashboard</Button>
+              ) : (
+                <Button onClick={() => router.push("/sweets")}>Dashboard</Button>
+              )}
+              <Button variant="outline" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button className="bg-gradient-primary hover:opacity-90 transition-opacity bg-pink-500" onClick={() => router.push("/login")}>
+                Login
+              </Button>
+              <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => router.push("/register")}>
+                Register
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>
