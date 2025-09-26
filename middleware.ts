@@ -13,22 +13,18 @@ interface DecodedToken {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
   const token = req.cookies.get('token')?.value;
 
-  // Allow public access to the getAll sweets route
   if (pathname === '/api/sweets/getAll') {
     return NextResponse.next();
   }
 
   const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
 
-  // If user is on an auth page (login/register)
   if (isAuthPage) {
     if (token) {
       try {
         const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
-        // Redirect to the appropriate dashboard based on role
         if (decoded.role === 'admin') {
           return NextResponse.redirect(new URL('/admin', req.url));
         }
@@ -42,33 +38,58 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // For all other routes considered protected
   if (!token) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/login';
     if (pathname.startsWith('/api')) {
       return new NextResponse(
         JSON.stringify({ error: 'Unauthorized: No token provided' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(url);
   }
 
-  // Verify token for the protected route
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
-    // Role-based access for admin pages
     if (pathname.startsWith('/admin') && decoded.role !== 'admin') {
-      return NextResponse.redirect(new URL('/login', req.url));
+      const url = req.nextUrl.clone();
+      url.pathname = '/login';
+      return NextResponse.redirect(url);
     }
 
-    return NextResponse.next(); // Token is valid, proceed
+    // Centralized admin role check for API routes
+    const isAdminApiRoute = pathname.startsWith('/api/sweets/create') ||
+                            pathname.startsWith('/api/sweets/update') ||
+                            pathname.startsWith('/api/sweets/delete') ||
+                            pathname.startsWith('/api/inventory/restock');
+
+    if (isAdminApiRoute && decoded.role !== 'admin') {
+      return new NextResponse(
+        JSON.stringify({ error: 'Forbidden: Admin access required' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Add user data to request headers for downstream API routes
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-user-id', decoded.id.toString());
+    requestHeaders.set('x-user-role', decoded.role);
+    requestHeaders.set('x-user-email', decoded.email);
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
 
   } catch (error) {
-    // If token is invalid, redirect to login and clear the bad cookie
-    const response = NextResponse.redirect(new URL('/login', req.url));
+    const url = req.nextUrl.clone();
+    url.pathname = '/login';
+    const response = NextResponse.redirect(url);
     response.cookies.delete('token');
-    
+
     if (pathname.startsWith('/api')) {
       return new NextResponse(
         JSON.stringify({ error: 'Unauthorized: Invalid token' }),
@@ -80,7 +101,6 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-// Apply middleware to all routes except static assets and the public homepage.
 export const config = {
   matcher: [
     '/api/sweets/:path*',

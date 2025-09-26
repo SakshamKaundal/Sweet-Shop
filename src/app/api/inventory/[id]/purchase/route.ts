@@ -2,24 +2,19 @@ import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
 import { NextResponse, NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
-import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // User is already authenticated by the middleware.
+    // We can get user info from the request headers.
+    const userId = req.headers.get('x-user-id');
 
-    // Verify the token and get user data
-    const decoded = jwt.verify(token, JWT_SECRET);
-    if (!decoded) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!userId) {
+      // This should technically not be reached if middleware is set up correctly
+      return NextResponse.json({ error: "Unauthorized: Missing user identifier" }, { status: 401 });
     }
 
     const { id } = await context.params;
@@ -53,9 +48,6 @@ export async function POST(
     );
   } catch (err) {
     console.error("Error purchasing sweet:", err);
-    if (err instanceof jwt.JsonWebTokenError) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }
