@@ -47,6 +47,8 @@ https://bakely-qhnukwsvk-kaundalsaksham-gmailcoms-projects.vercel.app/
 Admin login : s@gmail.com
 customer login : j@gmail.com 
 
+Password for both : 123456
+
 admin is only one and is created my the developer only 
 normal login is default to customers
 
