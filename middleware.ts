@@ -14,6 +14,11 @@ interface DecodedToken {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // ✨ Allow public access to the getAll sweets route
+  if (pathname === '/api/sweets/getAll') {
+    return NextResponse.next();
+  }
+
   // 1. Define protected routes
   const protectedRoutes = [
     /^\/api\/sweets\/.*$/,

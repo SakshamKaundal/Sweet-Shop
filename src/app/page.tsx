@@ -22,12 +22,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchSweets = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/sweets/getAll', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch('/api/sweets/getAll');
         const data = await response.json();
         const mappedSweets = data.sweets.map((sweet: ApiSweet) => ({
           id: sweet.id.toString(),
