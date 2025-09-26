@@ -68,11 +68,10 @@ export async function POST(req: Request) {
       { expiresIn: "24h" }
     );
 
-    // Return success response
-    return NextResponse.json(
+    // Create success response
+    const response = NextResponse.json(
       {
         message: "Login successful",
-        token,
         user: {
           id: user.id,
           email: user.email,
@@ -82,6 +81,17 @@ export async function POST(req: Request) {
       },
       { status: 200 }
     );
+
+    // Set token in a secure, HttpOnly cookie
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 1 day
+    });
+
+    return response;
 
   } catch (error) {
     console.error("Login error:", error);

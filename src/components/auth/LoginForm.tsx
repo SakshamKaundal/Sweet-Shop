@@ -15,27 +15,6 @@ export function LoginForm() {
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
 
-  // ✅ check if already logged in and redirect
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        setLoggedIn(true);
-        try {
-          const decoded = jwt.decode(token) as DecodedToken;
-          if (decoded.role === 'admin') {
-            router.push("/admin");
-          } else {
-            router.push("/sweets");
-          }
-        } catch (error) {
-          console.error("Invalid token, redirecting to sweets page:", error);
-          router.push("/sweets");
-        }
-      }
-    }
-  }, [router]);
-
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -52,7 +31,6 @@ export function LoginForm() {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.token);
       window.dispatchEvent(new CustomEvent('loginStateChange'));
       setLoggedIn(true);
       if (data.user.role === 'admin') {

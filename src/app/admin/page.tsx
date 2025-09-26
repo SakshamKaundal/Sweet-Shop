@@ -32,12 +32,7 @@ export default function AdminPage() {
 
   const fetchSweets = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/sweets/getAll', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch('/api/sweets/getAll');
       const data = await response.json();
       const mappedSweets = data.sweets.map((sweet: ApiSweet) => ({
         id: sweet.id.toString(),
@@ -61,7 +56,6 @@ export default function AdminPage() {
 
   const handleAdd = async (formData: Omit<Sweet, 'id' | 'rating'> & { minStock: number }) => {
     try {
-      const token = localStorage.getItem("token");
       const newSweet = {
         name: formData.name,
         description: formData.description,
@@ -75,7 +69,6 @@ export default function AdminPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(newSweet),
       });
@@ -92,12 +85,10 @@ export default function AdminPage() {
 
   const handleUpdate = async (updatedSweet: Sweet) => {
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch(`/api/sweets/update/${updatedSweet.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(updatedSweet),
       });
@@ -115,12 +106,8 @@ export default function AdminPage() {
   const handleDelete = async (sweetId: string) => {
     if (window.confirm('Are you sure you want to delete this sweet?')) {
       try {
-        const token = localStorage.getItem("token");
         const response = await fetch(`/api/sweets/delete/${sweetId}`, {
           method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
         });
         if (response.ok) {
           fetchSweets();
