@@ -34,9 +34,9 @@ export function LoginForm() {
       window.dispatchEvent(new CustomEvent('loginStateChange'));
       setLoggedIn(true);
       if (data.user.role === 'admin') {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else {
-        router.push("/sweets"); 
+        window.location.href = "/sweets"; 
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
