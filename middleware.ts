@@ -109,7 +109,6 @@ export const config = {
     '/api/sweets/:path*',
     '/api/inventory/:path*',
     '/admin/:path*',
-    '/sweets/:path*',
     '/login',
     '/register',
   ],
