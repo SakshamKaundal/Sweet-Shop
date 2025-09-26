@@ -3,9 +3,7 @@
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import jwt from "jsonwebtoken";
 import { Pacifico } from "next/font/google";
 
 const pacifico = Pacifico({
@@ -13,51 +11,8 @@ const pacifico = Pacifico({
   subsets: ["latin"],
 });
 
-interface DecodedToken {
-  role: string;
-}
-
 export const Header = () => {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  const checkLoginState = () => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem("token");
-      if (token) {
-        setIsLoggedIn(true);
-        try {
-          const decoded = jwt.decode(token) as DecodedToken;
-          setUserRole(decoded.role);
-        } catch {
-          console.error("Invalid token");
-        }
-      } else {
-        setIsLoggedIn(false);
-        setUserRole(null);
-      }
-    }
-  };
-
-  useEffect(() => {
-    checkLoginState();
-
-    window.addEventListener('loginStateChange', checkLoginState);
-    window.addEventListener('logout', checkLoginState);
-
-    return () => {
-      window.removeEventListener('loginStateChange', checkLoginState);
-      window.removeEventListener('logout', checkLoginState);
-    };
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.dispatchEvent(new CustomEvent('logout'));
-    router.push("/login");
-  };
 
   return (
     <header className="sticky top-0 z-50 border-black supports-[backdrop-filter]:bg-background/60 ">
@@ -85,27 +40,9 @@ export const Header = () => {
           <Button variant="ghost" size="icon">
             <User className="h-5 w-5" />
           </Button>
-          {isLoggedIn ? (
-            <>
-              {userRole === 'admin' ? (
-                <Button onClick={() => router.push("/admin")}>Admin Dashboard</Button>
-              ) : (
-                <Button onClick={() => router.push("/sweets")}>Dashboard</Button>
-              )}
-              <Button variant="outline" onClick={handleLogout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button className="bg-gradient-primary hover:opacity-90 transition-opacity bg-pink-500" onClick={() => router.push("/login")}>
-                Login
-              </Button>
-              <Button className="bg-gradient-primary hover:opacity-90 transition-opacity" onClick={() => router.push("/register")}>
-                Register
-              </Button>
-            </>
-          )}
+          <Button className="bg-gradient-primary hover:opacity-90 transition-opacity bg-pink-500" onClick={() => router.push("/login")}>
+            Login
+          </Button>
         </div>
       </div>
     </header>

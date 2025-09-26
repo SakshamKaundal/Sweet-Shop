@@ -1,10 +1,13 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { SweetsGrid } from '@/components/SweetsGrid';
 import { Sweet } from '@/components/SweetCard';
 import { SweetFilters } from '@/components/SweetFilter';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
 interface ApiSweet {
@@ -38,6 +41,7 @@ export default function SweetsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortBy, setSortBy] = useState<string>('name');
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   // 🔑 Fetch sweets on mount
   useEffect(() => {
@@ -105,7 +109,13 @@ export default function SweetsPage() {
       prev.map((s) => (s.id === updatedSweet.id ? updatedSweet : s))
     );
   };
-  
+
+  const handleLogout = async () => {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (res.ok) {
+      router.push('/login');
+    }
+  };
 
   return (
     <div className="relative flex flex-col md:flex-row gap-8 p-8">
@@ -121,9 +131,12 @@ export default function SweetsPage() {
 
       <main className="flex-1">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          <h1 className="text-4xl font-extrabold tracking-tight text-white">
-            Our Sweet Collection
-          </h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-4xl font-extrabold tracking-tight text-white">
+              Our Sweet Collection
+            </h1>
+            <Button variant="outline" onClick={handleLogout}>Logout</Button>
+          </div>
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
             <Input
