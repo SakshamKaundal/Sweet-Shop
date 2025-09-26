@@ -88,7 +88,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next(); // Token is valid, proceed
 
   } catch (error) {
-    console.log('[Middleware] Token verification FAILED.', error);
+    console.log('[Middleware] Token verification FAILED.');
+    // Log the specific JWT error
+    if (error instanceof jwt.JsonWebTokenError) {
+      console.log(`[Middleware] JWT Error Name: ${error.name}`);
+      console.log(`[Middleware] JWT Error Message: ${error.message}`);
+    }
+
     // If token is invalid, redirect to login and clear the bad cookie
     const response = NextResponse.redirect(new URL('/login', req.url));
     response.cookies.delete('token');
