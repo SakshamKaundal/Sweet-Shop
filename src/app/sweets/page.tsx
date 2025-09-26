@@ -105,6 +105,7 @@ export default function SweetsPage() {
       prev.map((s) => (s.id === updatedSweet.id ? updatedSweet : s))
     );
   };
+  
 
   return (
     <div className="relative flex flex-col md:flex-row gap-8 p-8">
