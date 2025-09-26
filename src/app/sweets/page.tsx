@@ -43,7 +43,26 @@ export default function SweetsPage() {
   useEffect(() => {
     const fetchSweets = async () => {
       try {
-        const response = await fetch('/api/sweets/getAll');
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
+
+        const response = await fetch('/api/sweets/getAll', {
+          headers: {
+            // Add the Authorization header
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          // If response is not OK, handle authentication error
+          if (response.status === 401) {
+            console.error('Unauthorized: Please log in.');
+            // Optionally, redirect to login page
+            // window.location.href = '/login';
+          }
+          throw new Error('Failed to fetch sweets');
+        }
+
         const data = await response.json();
 
         const mappedSweets: Sweet[] = data.sweets.map((sweet: ApiSweet) =>

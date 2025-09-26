@@ -32,7 +32,12 @@ export default function AdminPage() {
 
   const fetchSweets = async () => {
     try {
-      const response = await fetch('/api/sweets/getAll');
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/sweets/getAll', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       const mappedSweets = data.sweets.map((sweet: ApiSweet) => ({
         id: sweet.id.toString(),
