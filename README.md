@@ -32,10 +32,15 @@ Lovable to get Frontend design Motivation
 
 
 ### Test Report
+
 "test-report.html" is the test report in the repo
 
 
 ## Live Website
+
+Depoyed in Versel 
+
+backend in Railway
 
 https://bakely-qhnukwsvk-kaundalsaksham-gmailcoms-projects.vercel.app/
 
@@ -287,14 +292,20 @@ Some Screen Shots from my WebSite
 ### log in
 ![Sweet Screenshot](./public/login.png)
 
-### log in
-![Sweet Screenshot](./public/login.png)
-
 ### dashboard
 ![Sweet Screenshot](./public/pdash.png)
 
 ### admin dashboard
 ![Sweet Screenshot](./public/adash.png)
+
+### admin dashboard
+![Sweet Screenshot](./public/aform.png)
+
+### add sweets 
+![Sweet Screenshot](./public/aform.png)
+
+### edit Restock sweets
+![Sweet Screenshot](./public/eform.png)
 
  
 
