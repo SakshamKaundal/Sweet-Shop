@@ -7,6 +7,12 @@ const config = {
   moduleNameMapper: {
     '^@/(.*)': '<rootDir>/src/$1',
   },
+  reporters: [
+    "default",
+    ["jest-html-reporter", {
+      "pageTitle": "Test Report"
+    }]
+  ]
 };
 
 module.exports = config;

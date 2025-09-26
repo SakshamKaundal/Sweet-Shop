@@ -13,7 +13,7 @@ describe("Sweets - Create", () => {
       body: JSON.stringify({
         name: "Gulab Jamun",
         description: "Soft and sweet dessert",
-        price: "15.50",
+        price: 15.50,
         stock: 100,
         minStock: 10,
         category: "Indian Sweets",
@@ -23,7 +23,7 @@ describe("Sweets - Create", () => {
     const res = await POST(req);
     const json = await res.json();
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
     expect(json.name).toBe("Gulab Jamun");
     expect(json.stock).toBe(100);
     expect(json.category).toBe("Indian Sweets");

@@ -234,8 +234,22 @@ Some Screen Shots from my WebSite
 ### Homepage
 ![Sweet Screenshot](./public/landing.png)
 
-### Dashboard
+### Sign in
 ![Sweet Screenshot](./public/reg.png)
+
+### log in
+![Sweet Screenshot](./public/login.png)
+
+### log in
+![Sweet Screenshot](./public/login.png)
+
+### dashboard
+![Sweet Screenshot](./public/pdash.png)
+
+### admin dashboard
+![Sweet Screenshot](./public/adash.png)
+
+
 
 ## Live Website
 
