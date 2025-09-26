@@ -16,8 +16,11 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify the token to ensure user is authenticated
-    jwt.verify(token, JWT_SECRET);
+    // Verify the token and get user data
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (!decoded) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { id } = await context.params;
     const parsedId = parseInt(id, 10);
