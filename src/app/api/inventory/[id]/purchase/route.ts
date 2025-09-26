@@ -2,19 +2,28 @@ import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
 import { NextResponse, NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+
+interface DecodedToken {
+  id: number;
+}
 
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // User is already authenticated by the middleware.
-    // We can get user info from the request headers.
-    const userId = req.headers.get('x-user-id');
+    const token = req.cookies.get('token')?.value;
 
-    if (!userId) {
-      // This should technically not be reached if middleware is set up correctly
-      return NextResponse.json({ error: "Unauthorized: Missing user identifier" }, { status: 401 });
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized: No token found" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    if (!decoded || !decoded.id) {
+        return NextResponse.json({ error: "Unauthorized: Invalid token" }, { status: 401 });
     }
 
     const { id } = await context.params;
@@ -48,6 +57,9 @@ export async function POST(
     );
   } catch (err) {
     console.error("Error purchasing sweet:", err);
+    if (err instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json({ error: "Unauthorized: JWT validation failed" }, { status: 401 });
+    }
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }

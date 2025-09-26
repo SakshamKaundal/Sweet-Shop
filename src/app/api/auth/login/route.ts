@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret"; // put in .env
+const isProduction = process.env.NODE_ENV === 'production';
 
 export async function POST(req: Request) {
   try {
@@ -82,11 +83,11 @@ export async function POST(req: Request) {
       { status: 200 }
     );
 
-    // Set token in a secure, HttpOnly cookie
+    // Set token in a secure, HttpOnly cookie with environment-specific settings
     response.cookies.set("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
       maxAge: 60 * 60 * 24, // 1 day
     });
