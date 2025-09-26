@@ -1,6 +1,49 @@
-# Sweet Shop Management System
+# Sweet Shop Management System (Bakely)
 
 A full-stack application for managing a sweet shop, including inventory, sweet management, and user authentication.
+
+### Homepage
+![Sweet Screenshot](./public/landing.png)
+
+### Tech Stack 
+
+Next js Frontend + Backend App router
+
+Drizzle ORM
+
+PostgreSQL
+
+Zod for from validations
+
+Tailwind
+
+Skipper UI for card animations
+
+### AI Assistance 
+
+ChatGpt 5 for Roadmap and Architecture for App
+
+Claude for better Code error handling 
+
+Gemini CLI for Bug fixes
+
+Lovable to get Frontend design Motivation
+
+
+
+### Test Report
+"test-report.html" is the test report in the repo
+
+
+## Live Website
+
+https://bakely-qhnukwsvk-kaundalsaksham-gmailcoms-projects.vercel.app/
+
+Admin login : s@gmail.com
+customer login : j@gmail.com 
+
+admin is only one and is created my the developer only 
+normal login is default to customers
 
 ---
 ## Table of Contents
@@ -49,6 +92,10 @@ Make sure you have the following installed on your machine:
     # .env.local
     DATABASE_URL="your_database_connection_string"
     # Add other environment variables here
+    ```
+4.  **Push DB schema
+    ```bash
+    npm run db:push
     ```
 
 ### Running the Application
@@ -249,8 +296,5 @@ Some Screen Shots from my WebSite
 ### admin dashboard
 ![Sweet Screenshot](./public/adash.png)
 
+ 
 
-
-## Live Website
-
-[Link to the deployed website will be added here]
