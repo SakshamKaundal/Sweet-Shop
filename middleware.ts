@@ -33,9 +33,14 @@ export async function middleware(req: NextRequest) {
   if (isAuthPage) {
     if (token) {
       try {
-        jwt.verify(token, JWT_SECRET);
-        console.log('[Middleware] User is on auth page but has valid token. Redirecting to /sweets.');
-        console.log('--- Middleware End ---');
+        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+        console.log('[Middleware] User is on auth page with a valid token.');
+        // Redirect to the appropriate dashboard based on role
+        if (decoded.role === 'admin') {
+          console.log('[Middleware] Admin user, redirecting to /admin.');
+          return NextResponse.redirect(new URL('/admin', req.url));
+        }
+        console.log('[Middleware] Customer user, redirecting to /sweets.');
         return NextResponse.redirect(new URL('/sweets', req.url));
       } catch (e) {
         console.log('[Middleware] User is on auth page with an INVALID token. Clearing cookie and allowing access.');

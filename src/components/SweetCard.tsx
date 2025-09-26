@@ -40,15 +40,10 @@ export const SweetCard = ({
   const handlePurchase = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("You must be logged in to purchase items.");
-        return;
-      }
-
       // Validate quantity before purchase
       if (quantity > localQuantity) {
         alert("Cannot purchase more than available quantity");
+        setLoading(false);
         return;
       }
 
@@ -56,7 +51,6 @@ export const SweetCard = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ quantity }),
       });
@@ -64,6 +58,7 @@ export const SweetCard = ({
       const data = await response.json();
 
       if (!response.ok) {
+        // Use the error message from the API
         throw new Error(data.error || "Purchase failed");
       }
 
