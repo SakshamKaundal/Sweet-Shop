@@ -53,6 +53,7 @@ export const SweetCard = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ quantity }),
+        credentials: 'include',
       });
 
       const data = await response.json();
