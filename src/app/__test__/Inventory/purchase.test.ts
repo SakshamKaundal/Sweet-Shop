@@ -2,9 +2,9 @@ import { POST } from "@/app/api/inventory/[id]/purchase/route";
 import { db } from "@/app/db";
 import { products, users } from "@/app/db/schema";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret");
 
 interface PurchaseResponse {
     message?: string;
@@ -29,11 +29,10 @@ describe("Sweets - Purchase", () => {
       role: "customer",
     }).returning();
 
-    customerToken = jwt.sign(
-      { id: customer.id, email: customer.email, role: "customer" },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    customerToken = await new SignJWT({ id: customer.id, email: customer.email, role: "customer" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("1h")
+      .sign(JWT_SECRET);
 
     // insert sweet
     const [sweet] = await db.insert(products).values({

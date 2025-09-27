@@ -1,8 +1,8 @@
 // src/app/api/auth/me/route.ts
 import { NextResponse, NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify, errors } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret");
 
 interface DecodedToken {
   id: number;
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    const { payload: decoded } = await jwtVerify(token, JWT_SECRET);
 
     // Return user information
     return NextResponse.json(
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (err) {
-    if (err instanceof jwt.JsonWebTokenError) {
+    if (err instanceof errors.JOSEError) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.json(

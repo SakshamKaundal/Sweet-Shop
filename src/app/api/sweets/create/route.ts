@@ -2,9 +2,9 @@ import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
 import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
-import jwt from "jsonwebtoken";
+import { jwtVerify, errors } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret");
 
 interface DecodedToken {
   role: string;
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    const { payload: decoded } = await jwtVerify(token, JWT_SECRET);
     if (decoded.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     // Return the created product with a 201 status code
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
+    if (error instanceof errors.JOSEError) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     // Handle potential JSON parsing errors or other unexpected issues

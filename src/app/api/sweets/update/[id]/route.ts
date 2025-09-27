@@ -2,9 +2,9 @@ import { db } from "@/app/db";
 import { products } from "@/app/db/schema";
 import { NextResponse, NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
-import jwt from "jsonwebtoken";
+import { jwtVerify, errors } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret");
 
 interface DecodedToken {
   role: string;
@@ -20,7 +20,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    const { payload: decoded } = await jwtVerify(token, JWT_SECRET);
     if (decoded.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -51,7 +51,7 @@ export async function PUT(
     return NextResponse.json({ sweet: updated }, { status: 200 });
   } catch (err) {
     console.error("Error updating sweet:", err);
-    if (err instanceof jwt.JsonWebTokenError) {
+    if (err instanceof errors.JOSEError) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.json(

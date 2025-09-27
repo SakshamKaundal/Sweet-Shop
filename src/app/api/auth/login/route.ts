@@ -2,11 +2,11 @@
 import { db } from "@/app/db";
 import { users } from "@/app/db/schema";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret"; // put in .env
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret");
 const isProduction = process.env.NODE_ENV === 'production';
 
 export async function POST(req: Request) {
@@ -58,16 +58,15 @@ export async function POST(req: Request) {
     }
 
     // Generate JWT token
-    const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        name: user.name,
-      },
-      JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    const token = await new SignJWT({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("24h")
+      .sign(JWT_SECRET);
 
     // Create success response
     const response = NextResponse.json(

@@ -2,9 +2,9 @@ import { DELETE } from "@/app/api/sweets/delete/[id]/route";
 import { db } from "@/app/db";
 import { products, users } from "@/app/db/schema";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "dev-secret");
 
 describe("Sweets - Delete", () => {
   let sweetId: number;
@@ -24,11 +24,10 @@ describe("Sweets - Delete", () => {
       role: "admin",
     }).returning();
 
-    adminToken = jwt.sign(
-      { id: admin.id, email: admin.email, role: "admin" },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    adminToken = await new SignJWT({ id: admin.id, email: admin.email, role: "admin" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("1h")
+      .sign(JWT_SECRET);
 
     // create a customer user
     const customerPass = await bcrypt.hash("customer123", 10);
@@ -39,11 +38,10 @@ describe("Sweets - Delete", () => {
       role: "customer",
     }).returning();
 
-    customerToken = jwt.sign(
-      { id: customer.id, email: customer.email, role: "customer" },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    customerToken = await new SignJWT({ id: customer.id, email: customer.email, role: "customer" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("1h")
+      .sign(JWT_SECRET);
 
     // insert a sweet
     const [sweet] = await db.insert(products).values({

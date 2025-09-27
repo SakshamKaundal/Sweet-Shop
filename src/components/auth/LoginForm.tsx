@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import jwt from "jsonwebtoken";
+import { decodeJwt } from "jose";
 
 interface DecodedToken {
   role: string;
@@ -53,7 +53,7 @@ export function LoginForm() {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwt.decode(token) as DecodedToken;
+        const decoded = decodeJwt(token) as DecodedToken;
         if (decoded.role === 'admin') {
           router.push("/admin");
         } else {

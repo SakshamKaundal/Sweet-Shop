@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret');
 
 interface DecodedToken {
   id: number;
@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest) {
   if (isAuthPage) {
     if (token) {
       try {
-        const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+        const { payload: decoded } = await jwtVerify(token, JWT_SECRET);
         if (decoded.role === 'admin') {
           return NextResponse.redirect(new URL('/admin', req.url));
         }
@@ -51,7 +51,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    const { payload: decoded } = await jwtVerify(token, JWT_SECRET);
 
     if (pathname.startsWith('/admin') && decoded.role !== 'admin') {
       const url = req.nextUrl.clone();
@@ -74,9 +74,9 @@ export async function middleware(req: NextRequest) {
 
     // Add user data to request headers for downstream API routes
     const requestHeaders = new Headers(req.headers);
-    requestHeaders.set('x-user-id', decoded.id.toString());
-    requestHeaders.set('x-user-role', decoded.role);
-    requestHeaders.set('x-user-email', decoded.email);
+    requestHeaders.set('x-user-id', String(decoded.id));
+    requestHeaders.set('x-user-role', String(decoded.role));
+    requestHeaders.set('x-user-email', String(decoded.email));
 
     return NextResponse.next({
       request: {
